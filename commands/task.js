@@ -30,7 +30,12 @@ module.exports = {
                     await interaction.reply("Task successfully added!");
                     break;
                 case 'get':
-                    await interaction.reply(`Current todo list: ${curTasks}`);
+                    if (curTasks.length === 0) {
+                        await interaction.reply('You don\'t have any tasks for today!');
+                    } else {
+                        const replyString = Array.from(curTasks, x => "+ " + x).join("\n");
+                        await interaction.reply(`Current todo list:\`\`\`markdown\n${replyString}\`\`\``);
+                    }
                     break;
             }
         } catch (error) { 
