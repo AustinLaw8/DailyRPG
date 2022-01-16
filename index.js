@@ -1,32 +1,97 @@
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
-const { token } = require('./config.json');
+const { Characters, Inventories, Items } = require('./dbConnect.js');
+const dotenv = require('dotenv');
+const { Op } = require('sequelize');
+
+dotenv.config();
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 client.commands = new Collection();
-client.localTaskStorage = new Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
 	client.commands.set(command.data.name, command);
 }
+const adminCommandFiles = fs.readdirSync('./admin').filter(file => file.endsWith('.js'));
+for (const file of adminCommandFiles) {
+	const command = require(`./admin/${file}`);
+	client.commands.set(command.data.name, command);
+}
 
-client.once('ready', () => {
+const localTaskStorage = new Collection();
+const characters = new Collection();
+const inventories = new Collection();
+const items = new Collection();
+const parser = /([+-][0-9]+){4}/;
+
+Reflect.defineProperty(characters, 'getStats', {
+	/* eslint-disable-next-line func-name-matching */
+	value: async function getStats(id) {
+		const user = characters.get(id);
+		if (user) {
+			return `Gold :coin:: ${user.gold}\nSTR :muscle:: ${user.STR}\nDEX :bow_and_arrow:: ${user.DEX}\nINT :book:: ${user.INT}\nWIZ :brain:: ${user.WIZ}\nStage: :european_castle:: ${user.stage}`;
+		} else {
+            return "";
+        }
+	},
+});
+
+client.once('ready', async () => {
+    const u = await Characters.findAll();
+    u.forEach(b => characters.set(b.user_id, b));
+
+    // const i = await Inventory.findAll();
+    // i.forEach(b => inventories.set(b.user_id, b));
+
+    // const it = await Items.findAll();
+    // it.forEach(b => items.set(b.item_id, b));
+
 	console.log('Ready!');
 });
 
 client.on('interactionCreate', async interaction => {
-    console.log('Interaction received, processing...');
 	if (!interaction.isCommand()) return;
 
 	const command = client.commands.get(interaction.commandName);
 	if (!command) return;
 
     try {
-        if (command.data.name === 'task') {
-            await command.execute(interaction,client.localTaskStorage);
+        if (command.data.name === 'item') {
+            switch(interaction.options.getSubcommand()) {
+                case 'add':
+                    const name = interaction.options.getString('name')
+                    const rarity = interaction.options.getString('rarity')
+                    const effect = interaction.options.getString('effect')
+
+                    if (rarity !== "N" && rarity !== "R" && rarity !== "SR" && rarity !== "SSR" && rarity !== "UR" && rarity !== "LR" && rarity !== "XR"){
+                        return interaction.reply('Invalid rarity.')
+                    }
+                    if (!effect.match(parser)) {
+                        return interaction.reply('Invalid effect (format).')
+                    }
+                    await Items.create({ name: name, rarity: rarity, effect: effect})
+                    return interaction.reply('Item added successfully');
+                case 'remove':
+                    return interaction.reply('Not implemented.');
+                case 'give':
+                    const target = interaction.options.getUser('target') ?? interaction.user;
+                    const itemName = interaction.options.getString('name');
+                    
+                    const user = await Characters.findOne({ where: { user_id: target.id } });
+                    if (!user) return interaction.reply(`That character doesn't exist.`);
+
+                    const item = await Items.findOne({ where: { name: { [Op.like]: itemName } } });
+                    if (!item) return interaction.reply(`That item doesn't exist.`);
+                    
+                    await user.addItem(item);
+                    return interaction.reply(`Gave ${target.tag} a ${itemName}`)
+            }
+        }else if (command.data.name === 'task') {
+            await command.execute(interaction,localTaskStorage);
+        } else if (command.data.name === 'rpg') {
+            await command.execute(interaction,characters);
         } else {
             await command.execute(interaction);
         }
@@ -36,6 +101,6 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
-client.login(token)
+client.login(process.env.token)
     .then(() => console.log('Successfully logged in...'))
     .catch(console.error)
