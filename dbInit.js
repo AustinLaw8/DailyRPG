@@ -39,7 +39,10 @@ const Items = require('./data/Items.js')(sequelize, Sequelize.DataTypes);
 
 const force = process.argv.includes('--force') || process.argv.includes('-f');
 sequelize.sync({ force }).then(async () => {
-    await Characters.upsert({ user_id: process.env.ME }),
-	console.log('Added me');
+    await Characters.upsert({ user_id: process.env.ME });
+    await Items.upsert({ name: "God Hand", rarity: "XR", effect: "+1000000000+1000000000+1000000000+1000000000"});
+    await Items.upsert({ name: "Fists", rarity: "XR", effect: "+1+0+0+0"});
+    await Items.upsert({ name: "Pebble", rarity: "XR", effect: "+0+1+0+0"});
+    console.log("Database initialized");
     sequelize.close();
 }).catch(console.error);

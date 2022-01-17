@@ -26,16 +26,12 @@ const inventories = new Collection();
 const items = new Collection();
 const parser = /([+-][0-9]+){4}/;
 
-Reflect.defineProperty(characters, 'getStats', {
+Reflect.defineProperty(characters, 'create', {
 	/* eslint-disable-next-line func-name-matching */
-	value: async function getStats(id) {
-		const user = characters.get(id);
-		if (user) {
-			return `Gold :coin:: ${user.gold}\nSTR :muscle:: ${user.STR}\nDEX :bow_and_arrow:: ${user.DEX}\nINT :book:: ${user.INT}\nWIZ :brain:: ${user.WIZ}\nStage: :european_castle:: ${user.stage}`;
-		} else {
-            return "";
-        }
-	},
+	value: async function create(id) {
+        const result = await Characters.create( {user_id: id} );
+        return result ? true : false;
+    },
 });
 
 client.once('ready', async () => {
@@ -79,7 +75,7 @@ client.on('interactionCreate', async interaction => {
                     const target = interaction.options.getUser('target') ?? interaction.user;
                     const itemName = interaction.options.getString('name');
                     
-                    const user = await Characters.findOne({ where: { user_id: target.id } });
+                    const user = await characters.get(target.id);
                     if (!user) return interaction.reply(`That character doesn't exist.`);
 
                     const item = await Items.findOne({ where: { name: { [Op.like]: itemName } } });

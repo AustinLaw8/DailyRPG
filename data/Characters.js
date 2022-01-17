@@ -39,6 +39,21 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             defaultValue: 1,
             allowNull: false,
+        },
+        weapon: {
+            type: DataTypes.STRING,
+            defaultValue: "Fists",
+            allowNull: false,
+        },
+        hat: {
+            type: DataTypes.STRING,
+            defaultValue: "No hat",
+            allowNull: false,
+        },
+        armor: {
+            type: DataTypes.STRING,
+            defaultValue: "T-Shirt",
+            allowNull: false,
         }
     }, {
         timestamps: false,
