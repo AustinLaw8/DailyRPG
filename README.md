@@ -36,7 +36,9 @@ There are two important groups of commands: `task` and `rpg`. Invoking _just_ `/
 ## TODO Roadmap
 
 - [x] Check to make sure user has a character when running task commands 
-- [ ] Implement permanent stat increasing items
+- [x] Implement permanent stat increasing items
+- [x] Implement rolling
+- [ ] Implement rate up
 - [ ] Add more items to the gacha list
 - [ ] Implement nicely formatted embedded messages 
 - [ ] Implement nicely formatted embedded messages especially for /rpg itemlist

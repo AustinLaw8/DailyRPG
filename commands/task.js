@@ -87,7 +87,7 @@ module.exports = {
                     if (await user.removeTask(interaction.options.getString('task'))) {
                         user.gold += 1;
                         await user.save();
-                        return interaction.reply(`Task ${interaction.options.getString('task')} completed!`);
+                        return interaction.reply(`Task ${interaction.options.getString('task')} completed! +1 Gold`);
                     } else {
                         return interaction.reply("Failed to mark task as completed for some reason... (name probably wasn't found)");
                     }

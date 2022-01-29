@@ -43,6 +43,12 @@ sequelize.sync({ force }).then(async () => {
     await Items.upsert({ name: "God Hand", rarity: "XR", effect: "+1000000000,+1000000000,+1000000000,+1000000000" });
     await Items.upsert({ name: "Fists", rarity: "XR", effect: "+1,+0,+0,+0" });
     await Items.upsert({ name: "Pebble", rarity: "XR", effect: "+0,+1,+0,+0" });
+    await Items.upsert({ name: "Training Dummy", rarity: "N", effect: "P,+1,+0,+0,+0" });
+    await Items.upsert({ name: "Bullseye", rarity: "N", effect: "P,+0,+1,+0,+0" });
+    await Items.upsert({ name: "Informational Magazine", rarity: "N", effect: "P,+0,+0,+1,+0" });
+    await Items.upsert({ name: "Spell Tome", rarity: "N", effect: "P,+0,+0,+0,+1" });
+    await Items.upsert({ name: "Adventurer's Handbook", rarity: "R", effect: "P,+1,+1,+1,+1" });
+    await Items.upsert({ name: "Sharpened Blade", rarity: "SR", effect: "+15,+0,+0,+0" });
     await Tasks.create({ user_id: "null", task_name: "null", timeout: new Date().toISOString() });
     console.log("Database initialized");
     sequelize.close();

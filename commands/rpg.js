@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const SQL = require('sequelize')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -22,7 +21,7 @@ module.exports = {
                 .addBooleanOption(option =>
                     option
                         .setName('multi')
-                        .setDescription('x10 roll, with SSR guaranteed! (rate up is a lie) (jk)'))
+                        .setDescription('x10 roll'))
                 .addUserOption(option =>
                     option
                         .setName('other')
@@ -51,7 +50,7 @@ module.exports = {
         try {
             if (interaction.options.getSubcommand() === 'create') {
                 // Create a character, if one does not exist
-                if (characters.get(target.id)) {
+                if (characters.get(interaction.user.id)) {
                     return interaction.reply('You already have a character!');
                 } else {
                     if (await characters.create(interaction.user.id)) {
@@ -76,10 +75,30 @@ module.exports = {
                         if (user.gold < 10) {
                             return interaction.reply('You don\'t have enough gold!')
                         } else {
-                            //roll
+                            const resultsMap = new Map();
+                            const resultsString = []
+                            characters.roll(10).forEach( async rollResult => {
+                                user.addItem(rollResult);
+                                if(resultsMap.has(rollResult.name)) {
+                                    resultsMap.set(rollResult.name, resultsMap.get(rollResult.name) + 1);
+                                } else {
+                                    resultsMap.set(rollResult.name, 1);
+                                }
+                            });
+                            resultsMap.forEach( (value, key) => {
+                                resultsString.push(`${key} x${value}`);
+                            });
+
+                            return interaction.reply(`You got: ${resultsString.join(', ')}!`);
                         }
                     } else {
-                        return interaction.reply('single')
+                        if (user.gold < 1) {
+                            return interaction.reply('You don\'t have enough gold!')
+                        } else {
+                            const rollResult = characters.roll()[0];
+                            await user.addItem(rollResult);
+                            return interaction.reply(`You got a(n) ${rollResult.name}!`)
+                        }
                     }
                 case 'inventory':
                     // view a Character's inventory

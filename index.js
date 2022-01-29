@@ -24,7 +24,7 @@ const characters = new Collection();
 // const inventories = new Collection();
 const items = new Collection();
 const parser = /([PH],)?([+-][0-9]+[,]){3}([+-][0-9]+)/;
-const rarities = ["N", "R", "SR", "SSR", "UR", "LR", "XR"]
+const rarities = ["N", "R", "SR", "SSR", "UR", "LR"]
 
 Reflect.defineProperty(characters, 'create', {
     /* eslint-disable-next-line func-name-matching */
@@ -34,13 +34,36 @@ Reflect.defineProperty(characters, 'create', {
     },
 });
 
+Reflect.defineProperty(characters, 'roll', {
+    /* eslint-disable-next-line func-name-matching */
+    value: function roll(numRolls=1, rates={"N": .55, "R":.95, "SR":1, /*0, 0, 0*/}){
+        const rolls = [];
+        let result;
+        for( let i = 0; i < numRolls; i++ ) {
+            const random = Math.random();
+            for ( const r in rates ) {
+                if (random < rates[r]) {
+                    result = r;
+                    break;
+                }
+            }
+            rolls.push(items.get(result)[Math.floor(Math.random() * items.get(result).length)]);
+        }
+        console.log(rolls)
+        return rolls;
+    },
+})
+
 client.once('ready', async () => {
     const u = await Characters.findAll();
     u.forEach(b => characters.set(b.user_id, b));
 
     rarities.forEach(b => items.set(b, new Array()))
     const i = await Items.findAll();
-    i.forEach(b => items.get(b.rarity).push(b));
+    i.forEach(b => {
+        if (b.rarity !== "XR")
+            items.get(b.rarity).push(b);
+    });
     // const i = await Inventory.findAll();
     // i.forEach(b => inventories.set(b.user_id, b));
 
@@ -64,7 +87,7 @@ client.on('interactionCreate', async interaction => {
                     const rarity = interaction.options.getString('rarity')
                     const effect = interaction.options.getString('effect')
 
-                    if (rarities.includes(rarity)) {
+                    if (rarities.includes(rarity) || rarity === "XR") {
                         return interaction.reply('Invalid rarity.')
                     }
                     if (!effect.match(parser)) {
@@ -95,10 +118,10 @@ client.on('interactionCreate', async interaction => {
                 items.forEach((itemsOfRarity, rarity) => {
                     itemsOfRarity.forEach( (item) => {
                         const stats = item.effect.split(',')
-                        if (stats[0] === 'p') {
-                            r.push(`${item.name} (${rarity}): Permanent Effects, STR${stats[1]}, DEX${stats[2]}, INT${stats[3]}, WIZ${stats[4]}`)
+                        if (stats[0] === 'P') {
+                            r.push(`${item.name} (${rarity}) - Permanent Effects: STR${stats[1]}, DEX${stats[2]}, INT${stats[3]}, WIZ${stats[4]}`)
                         } else {
-                            r.push(`${item.name} (${rarity}): STR${stats[0]}, DEX${stats[1]}, INT${stats[2]}, WIZ${stats[3]}`)
+                            r.push(`${item.name} (${rarity}) - Equipped Effects: STR${stats[0]}, DEX${stats[1]}, INT${stats[2]}, WIZ${stats[3]}`)
                         }
                     })
                     

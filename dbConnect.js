@@ -13,6 +13,7 @@
 
 const Sequelize = require('sequelize');
 const dotenv = require('dotenv');
+const { user } = require('pg/lib/defaults');
 dotenv.config();
 const oneDay = 1000 * 60 * 60 * 24;
 
@@ -40,6 +41,14 @@ Inventories.belongsTo(Items, { foreignKey: 'item_id', as: 'item' });
 Reflect.defineProperty(Characters.prototype, 'addItem', {
     /* eslint-disable-next-line func-name-matching */
     value: async function addItem(item) {
+        if (item.effect[0] === 'P') {
+            const stats = item.effect.split(',');
+            this.STR += parseInt(stats[1],10);
+            this.DEX += parseInt(stats[2],10);
+            this.INT += parseInt(stats[3],10);
+            this.WIZ += parseInt(stats[4],10);
+            return this.save();
+        }
         const userItem = await Inventories.findOne({
             where: { user_id: this.user_id, item_id: item.id },
         });
