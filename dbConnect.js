@@ -14,6 +14,7 @@
 const Sequelize = require('sequelize');
 const dotenv = require('dotenv');
 dotenv.config();
+const oneDay = 1000 * 60 * 60 * 24;
 
 const sequelize = new Sequelize(process.env.DATABASE_URI, {
     dialectOptions: {
@@ -27,6 +28,7 @@ const sequelize = new Sequelize(process.env.DATABASE_URI, {
 const Characters = require('./data/Characters.js')(sequelize, Sequelize.DataTypes);
 const Inventories = require('./data/Inventory.js')(sequelize, Sequelize.DataTypes);
 const Items = require('./data/Items.js')(sequelize, Sequelize.DataTypes);
+const Tasks = require('./data/Tasks.js')(sequelize, Sequelize.DataTypes);
 
 
 sequelize.authenticate()
@@ -51,6 +53,22 @@ Reflect.defineProperty(Characters.prototype, 'addItem', {
     }
 })
 
+Reflect.defineProperty(Characters.prototype, 'addTask', {
+	/* eslint-disable-next-line func-name-matching */
+    value: async function addTask(task) {
+        const userTask = await Tasks.findOne({
+            where: {user_id: this.user_id, task_name: task },
+        });
+        
+        if (userTask) {
+            return null;
+        } else {
+            const date = new Date();
+            return Tasks.create({user_id: this.user_id, task_name: task, timeout: date.getTime() + oneDay })
+        }
+    }
+})
+
 Reflect.defineProperty(Characters.prototype, 'getStats', {
 	/* eslint-disable-next-line func-name-matching */
 	value: async function getStats() {
@@ -71,4 +89,28 @@ Reflect.defineProperty(Characters.prototype, 'getItems', {
 	},
 });
 
-module.exports = { Characters, Inventories, Items }
+Reflect.defineProperty(Characters.prototype, 'getTasks', {
+	/* eslint-disable-next-line func-name-matching */
+    value: async function getTasks() {
+        return await Tasks.findAll({
+            where: { user_id: this.user_id },
+        })
+    }
+})
+
+Reflect.defineProperty(Characters.prototype, 'removeTask', {
+	/* eslint-disable-next-line func-name-matching */
+    value: async function removeTask(task) {
+        const target = await Tasks.findOne({ 
+            where: { user_id: this.user_id, task_name: task }
+        })
+        console.log(target);
+        if (target) {
+            await target.destroy();
+            return true;
+        } else {
+            return false;
+        }
+    }
+})
+module.exports = { Characters, Inventories, Tasks, Items }

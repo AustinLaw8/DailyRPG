@@ -42,6 +42,10 @@ module.exports = {
             subcommand
                 .setName('create')
                 .setDescription('Creates a new character (bound to your discord account)')
+        ).addSubcommand(subcommand =>
+            subcommand
+                .setName('itemlist')
+                .setDescription('Lists all items currently available.')
         ),
 	async execute(interaction, characters) {
         try {

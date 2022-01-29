@@ -1,6 +1,6 @@
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
-const { Characters, Inventories, Items } = require('./dbConnect.js');
+const { Characters, Inventories, Tasks, Items } = require('./dbConnect.js');
 const dotenv = require('dotenv');
 const { Op } = require('sequelize');
 
@@ -20,11 +20,10 @@ for (const file of adminCommandFiles) {
 	client.commands.set(command.data.name, command);
 }
 
-const localTaskStorage = new Collection();
 const characters = new Collection();
-const inventories = new Collection();
+// const inventories = new Collection();
 const items = new Collection();
-const parser = /([+-][0-9]+){4}/;
+const parser = /([+-][0-9]+[,]){4}/;
 
 Reflect.defineProperty(characters, 'create', {
 	/* eslint-disable-next-line func-name-matching */
@@ -38,6 +37,8 @@ client.once('ready', async () => {
     const u = await Characters.findAll();
     u.forEach(b => characters.set(b.user_id, b));
 
+    const i = await Items.findAll();
+    i.forEach(b => items.set(b.name, b));
     // const i = await Inventory.findAll();
     // i.forEach(b => inventories.set(b.user_id, b));
 
@@ -85,8 +86,16 @@ client.on('interactionCreate', async interaction => {
                     return interaction.reply(`Gave ${target.tag} a ${itemName}`)
             }
         }else if (command.data.name === 'task') {
-            await command.execute(interaction,localTaskStorage);
+            await command.execute(interaction, characters);
         } else if (command.data.name === 'rpg') {
+            if (interaction.options.getSubcommand() === 'itemlist') { 
+                const r = []
+                items.forEach((value, key) => {
+                    const stats = value.effect.split(',')
+                    r.push(`${key} (${value.rarity}): STR${stats[0]}, DEX${stats[1]}, INT${stats[2]}, WIZ${stats[3]}`)
+                })
+                return interaction.reply(r.join('\n'));
+            }
             await command.execute(interaction,characters);
         } else {
             await command.execute(interaction);

@@ -19,12 +19,12 @@ module.exports = {
         )
         .addSubcommand(subcommand =>
             subcommand
-                .setName('finish')
-                .setDescription('Finish a task!')
+                .setName('complete')
+                .setDescription('Complete a task!')
                 .addStringOption(option => 
                     option
                         .setName('task')
-                        .setDescription('The task you finished!')
+                        .setDescription('The task you completed!')
                         .setRequired(true)
                 )
         )
@@ -32,42 +32,66 @@ module.exports = {
             subcommand
                 .setName('get')
                 .setDescription('Look at all your tasks for the day!')
+        ).addSubcommand(subcommand =>
+            subcommand
+                .setName('remove')
+                .setDescription('Remove a task you don\'t plan on doing.')
+                .addStringOption(option => 
+                    option
+                        .setName('task')
+                        .setDescription('The task you want to remove')
+                        .setRequired(true)
+                )
         ),
-	async execute(interaction, localTaskStorage, characters) {
+	async execute(interaction, characters) {
         try {
             const date = new Date();
-            const id = interaction.user.id;
-            const curTasks = localTaskStorage.get(id) ?? new Map(); 
-            if (!localTaskStorage.has(id)) localTaskStorage.set(id, curTasks);
+            const user = characters.get(interaction.user.id);
+            const curTasks = await user.getTasks();
             switch (interaction.options.getSubcommand()) {
                 case 'add':
-                    const taskToAdd = interaction.options.getString('task');
-                    curTasks.set(taskToAdd, date);
-                    await interaction.reply("Task successfully added!");
-                    setTimeout( (id, taskToAdd, localTaskStorage) => {localTaskStorage.get(id).delete(taskToAdd)}, oneDay, id, taskToAdd, localTaskStorage)
-                    break;
-                case 'get': 
-                    if (curTasks.size === 0) {
-                        await interaction.reply('You don\'t have any tasks for today!');
+                    const taskToAdd = interaction.options.getString('task')
+                    if(user.addTask(taskToAdd)) {
+                        setTimeout( (user, taskToAdd) => {
+                            user.removeTask(taskToAdd) },
+                            oneDay, user, taskToAdd,
+                        );
+                        return interaction.reply("Task successfully added!");
                     } else {
+                        return interaction.reply("Failed to add task for some reason...");
+                    }
+                case 'get': //FIXME: currently overrides duplicates; 
+                    if (curTasks.length > 0) {
                         const replyString = Array.from(curTasks, (x) => {
-                            const expirationTime = (oneDay - (date.getTime() - x[1].getTime())) / 1000;
+                            const timeoutT = new Date(x.timeout);
+                            const expirationTime = (timeoutT.getTime() - date.getTime()) / 1000;
                             const hours = Math.floor(expirationTime / 3600);
                             const minutes = Math.floor((expirationTime / 60) % 60)
                             const seconds = Math.floor(expirationTime % 60);
-                            return `+ ${x[0]}, expires in ${hours} hours, ${minutes} minutes, and ${seconds} seconds`;
+                            return `+ ${x.task_name}, expires in ${hours} hours, ${minutes} minutes, and ${seconds} seconds`;
                         }).join("\n");
-                        await interaction.reply(`Current todo list:\`\`\`markdown\n${replyString}\`\`\``);
+                        return interaction.reply(`Current todo list:\`\`\`markdown\n${replyString}\`\`\``);
+                    } else {
+                        return interaction.reply('You don\'t have any tasks for today!');
                     }
-                    break;
-                // case 'finish':
-                //     const taskToComplete = interaction.options.getString('task');
-                //     curTasks.delete(taskToComplete);
-                //     break;
+                case 'remove':
+                    if (await user.removeTask(interaction.options.getString('task'))) {
+                        return interaction.reply(`Task ${interaction.options.getString('task')} deleted!`);
+                    } else {
+                        return interaction.reply("Failed to remove task for some reason... (name probably wasn't found)");
+                    }
+                case 'complete':
+                    if (await user.removeTask(interaction.options.getString('task'))) {
+                        user.gold +=1;
+                        await user.save();
+                        return interaction.reply(`Task ${interaction.options.getString('task')} completed!`);
+                    } else {
+                        return interaction.reply("Failed to mark task as completed for some reason... (name probably wasn't found)");
+                    }
             }
         } catch (error) { 
             console.error(error);
-            await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+            return interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
         }
 	},
 };
