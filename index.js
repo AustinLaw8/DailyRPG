@@ -23,7 +23,8 @@ for (const file of adminCommandFiles) {
 const characters = new Collection();
 // const inventories = new Collection();
 const items = new Collection();
-const parser = /([+-][0-9]+[,]){4}/;
+const parser = /([PH],)?([+-][0-9]+[,]){3}([+-][0-9]+)/;
+const rarities = ["N", "R", "SR", "SSR", "UR", "LR", "XR"]
 
 Reflect.defineProperty(characters, 'create', {
     /* eslint-disable-next-line func-name-matching */
@@ -37,8 +38,9 @@ client.once('ready', async () => {
     const u = await Characters.findAll();
     u.forEach(b => characters.set(b.user_id, b));
 
+    rarities.forEach(b => items.set(b, new Array()))
     const i = await Items.findAll();
-    i.forEach(b => items.set(b.name, b));
+    i.forEach(b => items.get(b.rarity).push(b));
     // const i = await Inventory.findAll();
     // i.forEach(b => inventories.set(b.user_id, b));
 
@@ -62,7 +64,7 @@ client.on('interactionCreate', async interaction => {
                     const rarity = interaction.options.getString('rarity')
                     const effect = interaction.options.getString('effect')
 
-                    if (rarity !== "N" && rarity !== "R" && rarity !== "SR" && rarity !== "SSR" && rarity !== "UR" && rarity !== "LR" && rarity !== "XR") {
+                    if (rarities.includes(rarity)) {
                         return interaction.reply('Invalid rarity.')
                     }
                     if (!effect.match(parser)) {
@@ -90,9 +92,16 @@ client.on('interactionCreate', async interaction => {
         } else if (command.data.name === 'rpg') {
             if (interaction.options.getSubcommand() === 'itemlist') {
                 const r = []
-                items.forEach((value, key) => {
-                    const stats = value.effect.split(',')
-                    r.push(`${key} (${value.rarity}): STR${stats[0]}, DEX${stats[1]}, INT${stats[2]}, WIZ${stats[3]}`)
+                items.forEach((itemsOfRarity, rarity) => {
+                    itemsOfRarity.forEach( (item) => {
+                        const stats = item.effect.split(',')
+                        if (stats[0] === 'p') {
+                            r.push(`${item.name} (${rarity}): Permanent Effects, STR${stats[1]}, DEX${stats[2]}, INT${stats[3]}, WIZ${stats[4]}`)
+                        } else {
+                            r.push(`${item.name} (${rarity}): STR${stats[0]}, DEX${stats[1]}, INT${stats[2]}, WIZ${stats[3]}`)
+                        }
+                    })
+                    
                 })
                 return interaction.reply(r.join('\n'));
             }
