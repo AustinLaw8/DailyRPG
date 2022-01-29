@@ -35,7 +35,7 @@ There are two important groups of commands: `task` and `rpg`. Invoking _just_ `/
 
 ## TODO Roadmap
 
-- [ ] Check to make sure user has a character when running task commands 
+- [x] Check to make sure user has a character when running task commands 
 - [ ] Implement permanent stat increasing items
 - [ ] Add more items to the gacha list
 - [ ] Implement nicely formatted embedded messages 
@@ -43,6 +43,7 @@ There are two important groups of commands: `task` and `rpg`. Invoking _just_ `/
 - [ ] Implement dailies
 - [ ] Implement fight attempts
 - [ ] Implement limited fight attempts
+- [ ] Task add currently overrides duplicates
 
 
 # Important Commands

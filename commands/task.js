@@ -3,14 +3,14 @@ const { Formatters } = require('discord.js')
 const oneDay = 1000 * 60 * 60 * 24;
 
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('task')
-		.setDescription('Access your tasks!')
+    data: new SlashCommandBuilder()
+        .setName('task')
+        .setDescription('Access your tasks!')
         .addSubcommand(subcommand =>
             subcommand
                 .setName('add')
                 .setDescription('Add a new task for today!')
-                .addStringOption(option => 
+                .addStringOption(option =>
                     option
                         .setName('task')
                         .setDescription('The task you want to add')
@@ -21,7 +21,7 @@ module.exports = {
             subcommand
                 .setName('complete')
                 .setDescription('Complete a task!')
-                .addStringOption(option => 
+                .addStringOption(option =>
                     option
                         .setName('task')
                         .setDescription('The task you completed!')
@@ -36,25 +36,28 @@ module.exports = {
             subcommand
                 .setName('remove')
                 .setDescription('Remove a task you don\'t plan on doing.')
-                .addStringOption(option => 
+                .addStringOption(option =>
                     option
                         .setName('task')
                         .setDescription('The task you want to remove')
                         .setRequired(true)
                 )
         ),
-	async execute(interaction, characters) {
+    async execute(interaction, characters) {
         try {
-            const date = new Date();
             const user = characters.get(interaction.user.id);
+            if (!user) { return interaction.reply('You don\'t have a character! Use `/rpg create` to make one!'); }
+            const date = new Date();
             const curTasks = await user.getTasks();
             switch (interaction.options.getSubcommand()) {
                 case 'add':
-                    const taskToAdd = interaction.options.getString('task')
-                    if(user.addTask(taskToAdd)) {
-                        setTimeout( (user, taskToAdd) => {
-                            user.removeTask(taskToAdd) },
-                            oneDay, user, taskToAdd,
+                    const taskToAdd = interaction.options.getString('task');
+                    const taskAdded = await user.addTask(taskToAdd);
+                    if (taskAdded) {
+                        setTimeout((taskAdded) => {
+                            taskAdded.destroy()
+                        },
+                            oneDay, taskAdded,
                         );
                         return interaction.reply("Task successfully added!");
                     } else {
@@ -82,16 +85,16 @@ module.exports = {
                     }
                 case 'complete':
                     if (await user.removeTask(interaction.options.getString('task'))) {
-                        user.gold +=1;
+                        user.gold += 1;
                         await user.save();
                         return interaction.reply(`Task ${interaction.options.getString('task')} completed!`);
                     } else {
                         return interaction.reply("Failed to mark task as completed for some reason... (name probably wasn't found)");
                     }
             }
-        } catch (error) { 
+        } catch (error) {
             console.error(error);
             return interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
         }
-	},
+    },
 };

@@ -4,13 +4,13 @@
 
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('items', {
-		name: {
+        name: {
             type: DataTypes.STRING,
             unique: true,
         },
         rarity: {
-			type: DataTypes.STRING,
-			allowNull: false,
+            type: DataTypes.STRING,
+            allowNull: false,
         },
         effect: {
             type: DataTypes.STRING,

@@ -4,11 +4,11 @@
 
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('tasks', {
-		user_id: DataTypes.STRING,
-		task_name: DataTypes.STRING,
+        user_id: DataTypes.STRING,
+        task_name: DataTypes.STRING,
         timeout: {
-			type: DataTypes.DATE,
-			allowNull: false,
+            type: DataTypes.DATE,
+            allowNull: false,
             'default': 0
         },
     }, {

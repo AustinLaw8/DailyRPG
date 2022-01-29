@@ -32,65 +32,65 @@ const Tasks = require('./data/Tasks.js')(sequelize, Sequelize.DataTypes);
 
 
 sequelize.authenticate()
-  .then(() => { console.log('Connection has been established successfully.'); })
-  .catch(err => { console.error('Unable to connect to the database:', err); });
+    .then(() => { console.log('Connection has been established successfully.'); })
+    .catch(err => { console.error('Unable to connect to the database:', err); });
 
 Inventories.belongsTo(Items, { foreignKey: 'item_id', as: 'item' });
 
 Reflect.defineProperty(Characters.prototype, 'addItem', {
-	/* eslint-disable-next-line func-name-matching */
+    /* eslint-disable-next-line func-name-matching */
     value: async function addItem(item) {
         const userItem = await Inventories.findOne({
-            where: {user_id: this.user_id, item_id: item.id},
+            where: { user_id: this.user_id, item_id: item.id },
         });
-        
+
         if (userItem) {
             userItem.amount += 1;
             return userItem.save();
         } else {
-            return Inventories.create({user_id: this.user_id, item_id: item.id, amount: 1})
+            return Inventories.create({ user_id: this.user_id, item_id: item.id, amount: 1 })
         }
     }
 })
 
 Reflect.defineProperty(Characters.prototype, 'addTask', {
-	/* eslint-disable-next-line func-name-matching */
+    /* eslint-disable-next-line func-name-matching */
     value: async function addTask(task) {
         const userTask = await Tasks.findOne({
-            where: {user_id: this.user_id, task_name: task },
+            where: { user_id: this.user_id, task_name: task },
         });
-        
+
         if (userTask) {
             return null;
         } else {
             const date = new Date();
-            return Tasks.create({user_id: this.user_id, task_name: task, timeout: date.getTime() + oneDay })
+            return Tasks.create({ user_id: this.user_id, task_name: task, timeout: date.getTime() + oneDay })
         }
     }
 })
 
 Reflect.defineProperty(Characters.prototype, 'getStats', {
-	/* eslint-disable-next-line func-name-matching */
-	value: async function getStats() {
-		const user = await Characters.findOne({
-            where: {user_id: this.user_id },
+    /* eslint-disable-next-line func-name-matching */
+    value: async function getStats() {
+        const user = await Characters.findOne({
+            where: { user_id: this.user_id },
         });
         return `Gold :coin:: ${user.gold}\nSTR :muscle:: ${user.STR}\nDEX :bow_and_arrow:: ${user.DEX}\nINT :book:: ${user.INT}\nWIZ :brain:: ${user.WIZ}\nStage: :european_castle:: ${user.stage}\nCurrent Equipment: ${user.weapon}, ${user.hat}, ${user.armor}.`;
-	},
+    },
 });
 
 Reflect.defineProperty(Characters.prototype, 'getItems', {
-	/* eslint-disable-next-line func-name-matching */
-	value: function getItems() {
-		return Inventories.findAll({
-			where: { user_id: this.user_id },
-			include: ['item'],
-		});
-	},
+    /* eslint-disable-next-line func-name-matching */
+    value: function getItems() {
+        return Inventories.findAll({
+            where: { user_id: this.user_id },
+            include: ['item'],
+        });
+    },
 });
 
 Reflect.defineProperty(Characters.prototype, 'getTasks', {
-	/* eslint-disable-next-line func-name-matching */
+    /* eslint-disable-next-line func-name-matching */
     value: async function getTasks() {
         return await Tasks.findAll({
             where: { user_id: this.user_id },
@@ -99,9 +99,9 @@ Reflect.defineProperty(Characters.prototype, 'getTasks', {
 })
 
 Reflect.defineProperty(Characters.prototype, 'removeTask', {
-	/* eslint-disable-next-line func-name-matching */
+    /* eslint-disable-next-line func-name-matching */
     value: async function removeTask(task) {
-        const target = await Tasks.findOne({ 
+        const target = await Tasks.findOne({
             where: { user_id: this.user_id, task_name: task }
         })
         console.log(target);

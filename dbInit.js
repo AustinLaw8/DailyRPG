@@ -12,13 +12,13 @@ const sequelize = new Sequelize(process.env.DATABASE_URI, {
 });
 
 sequelize
-  .authenticate()
-  .then(() => {
-    console.log('Connection has been established successfully.');
-  })
-  .catch(err => {
-    console.error('Unable to connect to the database:', err);
-  });
+    .authenticate()
+    .then(() => {
+        console.log('Connection has been established successfully.');
+    })
+    .catch(err => {
+        console.error('Unable to connect to the database:', err);
+    });
 
 /* Table Formats
  *
@@ -40,9 +40,9 @@ const Tasks = require('./data/Tasks.js')(sequelize, Sequelize.DataTypes);
 const force = process.argv.includes('--force') || process.argv.includes('-f');
 sequelize.sync({ force }).then(async () => {
     await Characters.upsert({ user_id: process.env.ME });
-    await Items.upsert({ name: "God Hand", rarity: "XR", effect: "+1000000000,+1000000000,+1000000000,+1000000000"});
-    await Items.upsert({ name: "Fists", rarity: "XR", effect: "+1,+0,+0,+0"});
-    await Items.upsert({ name: "Pebble", rarity: "XR", effect: "+0,+1,+0,+0"});
+    await Items.upsert({ name: "God Hand", rarity: "XR", effect: "+1000000000,+1000000000,+1000000000,+1000000000" });
+    await Items.upsert({ name: "Fists", rarity: "XR", effect: "+1,+0,+0,+0" });
+    await Items.upsert({ name: "Pebble", rarity: "XR", effect: "+0,+1,+0,+0" });
     await Tasks.create({ user_id: "null", task_name: "null", timeout: new Date().toISOString() });
     console.log("Database initialized");
     sequelize.close();
