@@ -131,7 +131,7 @@ module.exports = {
                     const opponent = enemies[rPick];
                     const userStats = [user.STR, user.DEX, user.INT, user.WIZ];
                     let won = true;
-                    if (Math.max.apply(null, numArray) > minStatsBase * 3) {
+                    if (Math.max.apply(null, userStats) > minStatsBase * 3) {
                         won = true;
                     } else {
                         for (let i = 0; i < 4; i++) {
