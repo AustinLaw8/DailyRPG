@@ -3,6 +3,7 @@ const { Client, Collection, Intents } = require('discord.js');
 const { Characters, Inventories, Tasks, Items } = require('./dbConnect.js');
 const dotenv = require('dotenv');
 const { Op } = require('sequelize');
+const { user } = require('pg/lib/defaults');
 
 dotenv.config();
 
@@ -50,7 +51,6 @@ Reflect.defineProperty(characters, 'roll', {
             }
             rolls.push(items.get(result)[Math.floor(Math.random() * items.get(result).length)]);
         }
-        console.log(rolls)
         return rolls;
     },
 })

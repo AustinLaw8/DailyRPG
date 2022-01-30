@@ -88,6 +88,8 @@ module.exports = {
                             const resultsString = []
                             characters.roll(10).forEach(async rollResult => {
                                 user.addItem(rollResult);
+                                user.gold -= 10;
+                                await user.save();
                                 if (resultsMap.has(rollResult.name)) {
                                     resultsMap.set(rollResult.name, resultsMap.get(rollResult.name) + 1);
                                 } else {
@@ -105,6 +107,8 @@ module.exports = {
                             return interaction.reply('You don\'t have enough gold!')
                         } else {
                             const rollResult = characters.roll()[0];
+                            user.gold -= 1;
+                            await user.save();
                             await user.addItem(rollResult);
                             return interaction.reply(`You got a(n) ${rollResult.name}!`)
                         }
