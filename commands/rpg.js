@@ -155,7 +155,6 @@ module.exports = {
                         interaction.editReply(`Currently fighting ${opponent} (Level ${s})...`)
                     }, 3000, interaction, s, opponent)
                     return interaction.reply(`Currently fighting ${opponent} (Level ${s})`)
-
             }
         } catch (error) {
             console.error(error);

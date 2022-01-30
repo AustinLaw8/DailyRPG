@@ -32,11 +32,10 @@ const rest = new REST({ version: '9' }).setToken(process.env.token);
             Routes.applicationGuildCommands(process.env.clientId, process.env.testGuildId),
             { body: all },
         );
-        //TODO: make commands work globably
-        // await rest.put(
-        // 	Routes.applicationGuildCommands(process.env.clientId, process.env.testGuildId),
-        // 	{ body: adminCommands },
-        // );
+        await rest.put(
+        	Routes.applicationGuildCommands(process.env.clientId, process.env.SERVER_1),
+        	{ body: commands },
+        );
         console.log('Successfully reloaded application (/) commands.');
     } catch (error) {
         console.error(error);
