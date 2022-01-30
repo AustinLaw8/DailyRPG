@@ -35,6 +35,8 @@ There are two important groups of commands: `task` and `rpg`. Invoking _just_ `/
 
 `/ping`: classic ping, just to see if the bot is alive
 
+`/remind <string> <time>`: pings you in X time about <reminder>. <time> format must be: Minutes Hours Days; larger time gaps can be dropped if not necessary (i.e. you can choose to not have Hours and Days if you want a reminder in 15 minutes; in that case, the command would look like `/remind string: do this time: 15`)
+
 ## TODO Roadmap
 
 - [x] Check to make sure user has a character when running task commands
@@ -50,6 +52,7 @@ There are two important groups of commands: `task` and `rpg`. Invoking _just_ `/
 - [ ] Task add currently overrides duplicates
 - [x] Remind command
 - [ ] Reminds built into tasks
+- [ ] Help command
 
 # Important Commands
 
@@ -76,5 +79,7 @@ Many rpg subcommands have an optional <other> parameter, that lets you run the c
 `/rpg roll <optional: multi> <optional: other>`: roll the gacha! (or roll it 10x)
 
 `/rpg inventory <optional: other>`: view your inventory
+
+`/rpg fight`: take on the next stage!
 
 `/rpg itemlist`: lists all items currently in the game
