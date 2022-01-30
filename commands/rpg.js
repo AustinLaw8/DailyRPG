@@ -80,6 +80,7 @@ module.exports = {
                     return interaction.reply(`${target.tag}'s Character:\n${replyString}`);
                 case 'roll':
                     // get Character, check and subtract gold
+                    let autoUsed = 0;
                     if (interaction.options.getBoolean('multi')) {
                         if (user.gold < 10) {
                             return interaction.reply('You don\'t have enough gold!')
@@ -95,12 +96,13 @@ module.exports = {
                                 } else {
                                     resultsMap.set(rollResult.name, 1);
                                 }
+                                if (rollResult.effect[0] === 'P') { autoUsed += 1}
                             });
                             resultsMap.forEach((value, key) => {
                                 resultsString.push(`${key} x${value}`);
                             });
 
-                            return interaction.reply(`You got: ${resultsString.join(', ')}!`);
+                            return interaction.reply(`You got: ${resultsString.join(', ')}! ${autoUsed} items used automatically.`);
                         }
                     } else {
                         if (user.gold < 1) {
@@ -110,7 +112,11 @@ module.exports = {
                             user.gold -= 1;
                             await user.save();
                             await user.addItem(rollResult);
-                            return interaction.reply(`You got a(n) ${rollResult.name}!`)
+                            if (rollResult.effect[0] === 'P') {
+                                return interaction.reply(`You got a(n) ${rollResult.name} (used automatically)!`)
+                            } else {
+                                return interaction.reply(`You got a(n) ${rollResult.name}!`)
+                            }
                         }
                     }
                 case 'inventory':

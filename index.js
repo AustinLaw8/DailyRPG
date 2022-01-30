@@ -38,7 +38,7 @@ Reflect.defineProperty(characters, 'create', {
 
 Reflect.defineProperty(characters, 'roll', {
     /* eslint-disable-next-line func-name-matching */
-    value: function roll(numRolls = 1, rates = { "N": .55, "R": .95, "SR": 1, /*0, 0, 0*/ }) {
+    value: function roll(numRolls = 1, rates = { "N": .80, "R": .95, "SR": 1, /*0, 0, 0*/ }) {
         const rolls = [];
         let result;
         for (let i = 0; i < numRolls; i++) {

@@ -59,7 +59,7 @@ module.exports = {
                         },
                             oneDay, taskAdded,
                         );
-                        return interaction.reply("Task successfully added!");
+                        return interaction.reply(`Task ${taskToAdd} successfully added!`);
                     } else {
                         return interaction.reply("Failed to add task for some reason...");
                     }

@@ -54,6 +54,8 @@ There are two important groups of commands: `task` and `rpg`. Invoking _just_ `/
 - [ ] Reminds built into tasks
 - [ ] Help command
 - [ ] Add error catches for everything that could go wrong
+- [ ] Change fight algorithm
+- [ ] Add a message for auto-used items
 
 # Important Commands
 
