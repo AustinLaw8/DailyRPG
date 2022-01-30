@@ -30,6 +30,7 @@ Reflect.defineProperty(characters, 'create', {
     /* eslint-disable-next-line func-name-matching */
     value: async function create(id) {
         const result = await Characters.create({ user_id: id });
+        characters.set(id, result);
         return result ? true : false;
     },
 });
