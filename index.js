@@ -3,7 +3,6 @@ const { Client, Collection, Intents } = require('discord.js');
 const { Characters, Inventories, Tasks, Items } = require('./dbConnect.js');
 const dotenv = require('dotenv');
 const { Op } = require('sequelize');
-const { user } = require('pg/lib/defaults');
 
 dotenv.config();
 
