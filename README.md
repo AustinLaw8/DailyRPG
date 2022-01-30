@@ -54,8 +54,8 @@ There are two important groups of commands: `task` and `rpg`. Invoking _just_ `/
 - [ ] Reminds built into tasks
 - [ ] Help command
 - [ ] Add error catches for everything that could go wrong
-- [ ] Change fight algorithm
-- [ ] Add a message for auto-used items
+- [x] Change fight algorithm
+- [x] Add a message for auto-used items
 
 # Important Commands
 
@@ -63,7 +63,7 @@ There are two important groups of commands: `task` and `rpg`. Invoking _just_ `/
 
 All task subcommands require a <task_name> parameter.
 
-`/task get <task_name>`: get a list of your current tasks.
+`/task list <task_name>`: lists your current tasks.
 
 `/task add <task_name>`: add a task to your list of today's tasks.
 

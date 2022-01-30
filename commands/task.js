@@ -30,7 +30,7 @@ module.exports = {
         )
         .addSubcommand(subcommand =>
             subcommand
-                .setName('get')
+                .setName('list')
                 .setDescription('Look at all your tasks for the day!')
         ).addSubcommand(subcommand =>
             subcommand
@@ -50,7 +50,7 @@ module.exports = {
             const date = new Date();
             const curTasks = await user.getTasks();
             switch (interaction.options.getSubcommand()) {
-                case 'add':
+                case 'add': //FIXME: currently overrides duplicates; 
                     const taskToAdd = interaction.options.getString('task');
                     const taskAdded = await user.addTask(taskToAdd);
                     if (taskAdded) {
@@ -63,7 +63,7 @@ module.exports = {
                     } else {
                         return interaction.reply("Failed to add task for some reason...");
                     }
-                case 'get': //FIXME: currently overrides duplicates; 
+                case 'list': 
                     if (curTasks.length > 0) {
                         const replyString = Array.from(curTasks, (x) => {
                             const timeoutT = new Date(x.timeout);
