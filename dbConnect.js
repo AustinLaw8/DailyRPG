@@ -17,7 +17,7 @@ const { user } = require('pg/lib/defaults');
 dotenv.config();
 const oneDay = 1000 * 60 * 60 * 24;
 
-const sequelize = new Sequelize(process.env.DATABASE_URI, {
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialectOptions: {
         ssl: {
             require: true,
