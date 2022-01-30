@@ -36,12 +36,12 @@ Reflect.defineProperty(characters, 'create', {
 
 Reflect.defineProperty(characters, 'roll', {
     /* eslint-disable-next-line func-name-matching */
-    value: function roll(numRolls=1, rates={"N": .55, "R":.95, "SR":1, /*0, 0, 0*/}){
+    value: function roll(numRolls = 1, rates = { "N": .55, "R": .95, "SR": 1, /*0, 0, 0*/ }) {
         const rolls = [];
         let result;
-        for( let i = 0; i < numRolls; i++ ) {
+        for (let i = 0; i < numRolls; i++) {
             const random = Math.random();
-            for ( const r in rates ) {
+            for (const r in rates) {
                 if (random < rates[r]) {
                     result = r;
                     break;
@@ -116,7 +116,7 @@ client.on('interactionCreate', async interaction => {
             if (interaction.options.getSubcommand() === 'itemlist') {
                 const r = []
                 items.forEach((itemsOfRarity, rarity) => {
-                    itemsOfRarity.forEach( (item) => {
+                    itemsOfRarity.forEach((item) => {
                         const stats = item.effect.split(',')
                         if (stats[0] === 'P') {
                             r.push(`${item.name} (${rarity}) - Permanent Effects: STR${stats[1]}, DEX${stats[2]}, INT${stats[3]}, WIZ${stats[4]}`)
@@ -124,7 +124,7 @@ client.on('interactionCreate', async interaction => {
                             r.push(`${item.name} (${rarity}) - Equipped Effects: STR${stats[0]}, DEX${stats[1]}, INT${stats[2]}, WIZ${stats[3]}`)
                         }
                     })
-                    
+
                 })
                 return interaction.reply(r.join('\n'));
             }

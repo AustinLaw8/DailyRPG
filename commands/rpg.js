@@ -1,4 +1,9 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const enemies = ["Slimy Slime", "Devilish Rat", "Impertinent Owl", "Wicked Wolf"]
+const multiplier = 1.25;
+const getMinStatsBase = (stage) => {
+    return Math.floor(stage ** (5 / 4));
+}
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -45,6 +50,10 @@ module.exports = {
             subcommand
                 .setName('itemlist')
                 .setDescription('Lists all items currently available.')
+        ).addSubcommand(subcommand =>
+            subcommand
+                .setName('fight')
+                .setDescription('Fight!')
         ),
     async execute(interaction, characters) {
         try {
@@ -77,15 +86,15 @@ module.exports = {
                         } else {
                             const resultsMap = new Map();
                             const resultsString = []
-                            characters.roll(10).forEach( async rollResult => {
+                            characters.roll(10).forEach(async rollResult => {
                                 user.addItem(rollResult);
-                                if(resultsMap.has(rollResult.name)) {
+                                if (resultsMap.has(rollResult.name)) {
                                     resultsMap.set(rollResult.name, resultsMap.get(rollResult.name) + 1);
                                 } else {
                                     resultsMap.set(rollResult.name, 1);
                                 }
                             });
-                            resultsMap.forEach( (value, key) => {
+                            resultsMap.forEach((value, key) => {
                                 resultsString.push(`${key} x${value}`);
                             });
 
@@ -105,6 +114,48 @@ module.exports = {
                     const userInv = await user.getItems();
                     if (!userInv.length) return interaction.reply(`${target.tag} has nothing!`);
                     return interaction.reply(`${target.tag} currently has ${userInv.map(i => `${i.amount} ${i.item.name}`).join(', ')}`);
+                case 'fight':
+                    // Fight next opponent
+                    const minStatsBase = getMinStatsBase(user.stage);
+                    const rPick = Math.floor(Math.random() * 4);
+                    const opponent = enemies[rPick];
+                    const userStats = [user.STR, user.DEX, user.INT, user.WIZ];
+                    let won = true;
+                    for (let i = 0; i < 4; i++) {
+                        if (i === rPick) {
+                            if (userStats[i] < Math.floor(minStatsBase * multiplier)) {
+                                won = false
+                            }
+                        } else {
+                            if (userStats[i] < minStatsBase) {
+                                won = false;
+                            }
+                        }
+                    }
+                    const s = user.stage;
+                    if (won) {
+                        user.stage += 1;
+                        await user.save();
+                        setTimeout((interaction, s, opponent) => {
+                            interaction.editReply(`Currently fighting ${opponent} (Level ${s})... Victory! You've advanced to the next stage.`)
+                        }, 4000, interaction, s, opponent)
+
+                    } else {
+                        setTimeout((interaction, s, opponent) => {
+                            interaction.editReply(`Currently fighting ${opponent} (Level ${s})... Defeat... go train some more before fighting again!`)
+                        }, 4000, interaction, s, opponent)
+                    }
+                    setTimeout((interaction, s, opponent) => {
+                        interaction.editReply(`Currently fighting ${opponent} (Level ${s}).`)
+                    }, 1000, interaction, s, opponent)
+                    setTimeout((interaction, s, opponent) => {
+                        interaction.editReply(`Currently fighting ${opponent} (Level ${s})..`)
+                    }, 2000, interaction, s, opponent)
+                    setTimeout((interaction, s, opponent) => {
+                        interaction.editReply(`Currently fighting ${opponent} (Level ${s})...`)
+                    }, 3000, interaction, s, opponent)
+                    return interaction.reply(`Currently fighting ${opponent} (Level ${s})`)
+
             }
         } catch (error) {
             console.error(error);

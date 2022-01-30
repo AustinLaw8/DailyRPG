@@ -43,10 +43,10 @@ Reflect.defineProperty(Characters.prototype, 'addItem', {
     value: async function addItem(item) {
         if (item.effect[0] === 'P') {
             const stats = item.effect.split(',');
-            this.STR += parseInt(stats[1],10);
-            this.DEX += parseInt(stats[2],10);
-            this.INT += parseInt(stats[3],10);
-            this.WIZ += parseInt(stats[4],10);
+            this.STR += parseInt(stats[1], 10);
+            this.DEX += parseInt(stats[2], 10);
+            this.INT += parseInt(stats[3], 10);
+            this.WIZ += parseInt(stats[4], 10);
             return this.save();
         }
         const userItem = await Inventories.findOne({

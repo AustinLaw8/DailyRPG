@@ -12,6 +12,6 @@ module.exports = {
     async execute(interaction) {
         const choices = interaction.options.getString('choices').split(' ');
         const i = Math.floor(Math.random() * choices.length);
-        await interaction.reply(`Chose \`${choices[i]}\` from \`${choices}\``);
+        return interaction.reply(`Chose \`${choices[i]}\` from \`${choices}\``);
     },
 };
