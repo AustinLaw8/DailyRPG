@@ -65,14 +65,14 @@ Reflect.defineProperty(characters, 'roll', {
 async function resetDailies() {
     characters.forEach(async (c) => {
         if (!didDailies.has(c.name)) {
-            c.streak -= 1
+            c.streak = 0
             await c.save();
-            didDailies.delete(c.name);
         }
         await c.resetDaily()
             .then(() => console.log("Dailies sucessfuly reset"))
             .catch((error) => console.error(error));
     })
+    didDailies.clear();
     setTimeout(resetDailies, oneDay);
 }
 
