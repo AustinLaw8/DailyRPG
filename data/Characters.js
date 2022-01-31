@@ -54,6 +54,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             defaultValue: "T-Shirt",
             allowNull: false,
+        },
+        streak: {
+            type: DataTypes.INTEGER,
+            default: 0,
+            allowNull: false,
         }
     }, {
         timestamps: false,
