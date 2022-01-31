@@ -59,7 +59,7 @@ module.exports = {
                     if (d.length > 0) {
                         const replyString = Array.from(d, (x) => {
                             const prepend = x.done ? '[x]' : '[ ]'
-                            return `- ${prepend} ${x.task_name}`;
+                            return `- ${prepend} ${x.daily_name}`;
                         }).join("\n");
                         return interaction.reply(`Today's work:\`\`\`markdown\n${replyString}\`\`\``);
                     } else {

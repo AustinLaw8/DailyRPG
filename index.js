@@ -73,6 +73,7 @@ async function resetDailies() {
             .then(() => console.log("Dailies sucessfuly reset"))
             .catch((error) => console.error(error));
     })
+    setTimeout(resetDailies, oneDay);
 }
 
 client.once('ready', async () => {
@@ -97,7 +98,7 @@ client.once('ready', async () => {
     const minutes = Math.floor((expirationTime / 60) % 60)
     const seconds = Math.floor(expirationTime % 60);
     console.log(`Time until next day: ${hours} hours, ${minutes} minutes, and ${seconds} seconds`);
-    setTimeout(resetDailies, expirationTime);
+    setTimeout(resetDailies, tomorrowFromAppStart.getTime() - new Date().getTime());
     // const i = await Inventory.findAll();
     // i.forEach(b => inventories.set(b.user_id, b));
 
