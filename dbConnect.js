@@ -84,6 +84,21 @@ Reflect.defineProperty(Characters.prototype, 'addTask', {
     }
 })
 
+Reflect.defineProperty(Characters.prototype, 'addDaily', {
+    /* eslint-disable-next-line func-name-matching */
+    value: async function addDaily(daily) {
+        const userDaily = await Dailies.findOne({
+            where: { user_id: this.user_id, daily_name: daily },
+        });
+
+        if (userDaily) {
+            return null;
+        } else {
+            return Dailies.create({ user_id: this.user_id, daily_name: daily, done: false, })
+        }
+    }
+})
+
 Reflect.defineProperty(Characters.prototype, 'getStats', {
     /* eslint-disable-next-line func-name-matching */
     value: async function getStats() {
@@ -117,6 +132,15 @@ Reflect.defineProperty(Characters.prototype, 'getTasks', {
     }
 })
 
+Reflect.defineProperty(Characters.prototype, 'getDailies', {
+    /* eslint-disable-next-line func-name-matching */
+    value: async function getDailies() {
+        return await Dailies.findAll({
+            where: { user_id: this.user_id },
+        })
+    }
+})
+
 Reflect.defineProperty(Characters.prototype, 'removeTask', {
     /* eslint-disable-next-line func-name-matching */
     value: async function removeTask(task) {
@@ -131,4 +155,37 @@ Reflect.defineProperty(Characters.prototype, 'removeTask', {
         }
     }
 })
+
+Reflect.defineProperty(Characters.prototype, 'removeDaily', {
+    /* eslint-disable-next-line func-name-matching */
+    value: async function removeDaily(daily) {
+        const target = await Tasks.findOne({
+            where: { user_id: this.user_id, daily_name: daily }
+        })
+        if (target) {
+            if (target.done) return false; 
+            await target.destroy();
+            return true;
+        } else {
+            return false;
+        }
+    }
+})
+
+Reflect.defineProperty(Characters.prototype, 'completeDaily', {
+    /* eslint-disable-next-line func-name-matching */
+    value: async function completeDaily(daily) {
+        const target = await Dailies.findOne({
+            where: { user_id: this.user_id, daily_name: daily }
+        })
+        if (target) {
+            target.done = true;
+            await target.save()
+            return true;
+        } else {
+            return false;
+        }
+    }
+})
+
 module.exports = { Characters, Inventories, Tasks, Items, Dailies }
