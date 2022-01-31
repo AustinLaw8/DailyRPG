@@ -63,7 +63,7 @@ Reflect.defineProperty(characters, 'roll', {
 })
 
 async function resetDailies() {
-    characters.forEach( c => {
+    characters.forEach( async (c) => {
         if (!didDailies.has(c.name)) {
             c.streak -= 1
             await c.save();
