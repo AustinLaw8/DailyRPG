@@ -57,7 +57,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         streak: {
             type: DataTypes.INTEGER,
-            default: 0,
+            defaultValue: 0,
             allowNull: false,
         }
     }, {

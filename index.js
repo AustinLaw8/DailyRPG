@@ -87,6 +87,11 @@ client.once('ready', async () => {
             items.get(b.rarity).push(b);
     });
 
+    //FIXME:
+    // get UTC time
+    // Convert to PST
+    // Go to tmr for PST start time
+    // subtract tmr from now to get time to first rest
     tomorrowFromAppStart.setDate(tomorrowFromAppStart.getDate() + 1)
     tomorrowFromAppStart.setHours(0)
     tomorrowFromAppStart.setMinutes(0)
