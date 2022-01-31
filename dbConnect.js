@@ -163,7 +163,7 @@ Reflect.defineProperty(Characters.prototype, 'removeDaily', {
             where: { user_id: this.user_id, daily_name: daily }
         })
         if (target) {
-            if (target.done) return false; 
+            if (target.done) return false;
             await target.destroy();
             return true;
         } else {
@@ -195,7 +195,7 @@ Reflect.defineProperty(Characters.prototype, 'resetDaily', {
             const dailies = await Dailies.findAll({
                 where: { user_id: this.user_id },
             });
-            dailies.forEach(d => {
+            dailies.forEach(async (d) => {
                 d.done = false;
                 await d.save();
             })

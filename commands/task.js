@@ -63,7 +63,7 @@ module.exports = {
                     } else {
                         return interaction.reply("Failed to add task for some reason...");
                     }
-                case 'list': 
+                case 'list':
                     if (curTasks.length > 0) {
                         const replyString = Array.from(curTasks, (x) => {
                             const timeoutT = new Date(x.timeout);

@@ -32,10 +32,10 @@ const oneDay = 1000 * 60 * 60 * 24;
 Reflect.defineProperty(characters, 'create', {
     /* eslint-disable-next-line func-name-matching */
     value: async function create(id) {
-        try { 
+        try {
             const result = await Characters.create({ user_id: id });
             characters.set(id, result);
-            return true;       
+            return true;
         } catch (error) {
             console.error(error);
             return false;
@@ -63,15 +63,15 @@ Reflect.defineProperty(characters, 'roll', {
 })
 
 async function resetDailies() {
-    characters.forEach( async (c) => {
+    characters.forEach(async (c) => {
         if (!didDailies.has(c.name)) {
             c.streak -= 1
             await c.save();
             didDailies.delete(c.name);
         }
         await c.resetDaily()
-            .then( () => console.log("Dailies sucessfuly reset") )
-            .catch( (error) => console.error(error) );
+            .then(() => console.log("Dailies sucessfuly reset"))
+            .catch((error) => console.error(error));
     })
 }
 
@@ -137,7 +137,7 @@ client.on('interactionCreate', async interaction => {
 
                     const user = await characters.get(target.id);
                     if (!user) return interaction.reply(`That character doesn't exist.`);
-                    if (itemName === 'gold') { 
+                    if (itemName === 'gold') {
                         user.gold += 1;
                         await user.save();
                         return interaction.reply(`Gold given`);
