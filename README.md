@@ -47,6 +47,7 @@ There are two important groups of commands: `task` and `rpg`. Invoking _just_ `/
 - [ ] Implement nicely formatted embedded messages
 - [ ] Implement nicely formatted embedded messages especially for /rpg itemlist
 - [ ] Implement dailies
+- [ ] Daily Streaks
 - [x] Implement fight attempts
 - [ ] Implement limited fight attempts
 - [ ] Task add currently overrides duplicates

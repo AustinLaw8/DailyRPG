@@ -1,6 +1,6 @@
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
-const { Characters, Inventories, Tasks, Items } = require('./dbConnect.js');
+const { Characters, Inventories, Tasks, Items, Dailies } = require('./dbConnect.js');
 const dotenv = require('dotenv');
 const { Op } = require('sequelize');
 
@@ -29,9 +29,14 @@ const rarities = ["N", "R", "SR", "SSR", "UR", "LR"]
 Reflect.defineProperty(characters, 'create', {
     /* eslint-disable-next-line func-name-matching */
     value: async function create(id) {
-        const result = await Characters.create({ user_id: id });
-        characters.set(id, result);
-        return result ? true : false;
+        try { 
+            const result = await Characters.create({ user_id: id });
+            characters.set(id, result);
+            return true;       
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
     },
 });
 
@@ -54,6 +59,10 @@ Reflect.defineProperty(characters, 'roll', {
     },
 })
 
+async function resetDailies() {
+
+}
+
 client.once('ready', async () => {
     const u = await Characters.findAll();
     u.forEach(b => characters.set(b.user_id, b));
@@ -64,6 +73,8 @@ client.once('ready', async () => {
         if (b.rarity !== "XR")
             items.get(b.rarity).push(b);
     });
+
+
     // const i = await Inventory.findAll();
     // i.forEach(b => inventories.set(b.user_id, b));
 
@@ -103,7 +114,11 @@ client.on('interactionCreate', async interaction => {
 
                     const user = await characters.get(target.id);
                     if (!user) return interaction.reply(`That character doesn't exist.`);
-
+                    if (itemName === 'gold') { 
+                        user.gold += 1;
+                        await user.save();
+                        return interaction.reply(`Gold given`);
+                    }
                     const item = await Items.findOne({ where: { name: { [Op.like]: itemName } } });
                     if (!item) return interaction.reply(`That item doesn't exist.`);
 

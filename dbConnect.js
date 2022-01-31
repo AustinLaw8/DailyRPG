@@ -30,6 +30,7 @@ const Characters = require('./data/Characters.js')(sequelize, Sequelize.DataType
 const Inventories = require('./data/Inventory.js')(sequelize, Sequelize.DataTypes);
 const Items = require('./data/Items.js')(sequelize, Sequelize.DataTypes);
 const Tasks = require('./data/Tasks.js')(sequelize, Sequelize.DataTypes);
+const Dailies = require('./data/Dailies.js')(sequelize, Sequelize.DataTypes);
 
 
 sequelize.authenticate()
@@ -41,23 +42,28 @@ Inventories.belongsTo(Items, { foreignKey: 'item_id', as: 'item' });
 Reflect.defineProperty(Characters.prototype, 'addItem', {
     /* eslint-disable-next-line func-name-matching */
     value: async function addItem(item) {
-        if (item.effect[0] === 'P') {
-            const stats = item.effect.split(',');
-            this.STR += parseInt(stats[1], 10);
-            this.DEX += parseInt(stats[2], 10);
-            this.INT += parseInt(stats[3], 10);
-            this.WIZ += parseInt(stats[4], 10);
-            return this.save();
-        }
-        const userItem = await Inventories.findOne({
-            where: { user_id: this.user_id, item_id: item.id },
-        });
+        try {
+            if (item.effect[0] === 'P') {
+                const stats = item.effect.split(',');
+                this.STR += parseInt(stats[1], 10);
+                this.DEX += parseInt(stats[2], 10);
+                this.INT += parseInt(stats[3], 10);
+                this.WIZ += parseInt(stats[4], 10);
+                return this.save();
+            }
+            const userItem = await Inventories.findOne({
+                where: { user_id: this.user_id, item_id: item.id },
+            });
 
-        if (userItem) {
-            userItem.amount += 1;
-            return userItem.save();
-        } else {
-            return Inventories.create({ user_id: this.user_id, item_id: item.id, amount: 1 })
+            if (userItem) {
+                userItem.amount += 1;
+                return userItem.save();
+            } else {
+                return Inventories.create({ user_id: this.user_id, item_id: item.id, amount: 1 })
+            }
+        } catch (error) {
+            console.log(error);
+            return false;
         }
     }
 })
@@ -81,10 +87,14 @@ Reflect.defineProperty(Characters.prototype, 'addTask', {
 Reflect.defineProperty(Characters.prototype, 'getStats', {
     /* eslint-disable-next-line func-name-matching */
     value: async function getStats() {
-        const user = await Characters.findOne({
-            where: { user_id: this.user_id },
-        });
-        return `Gold :coin:: ${user.gold}\nSTR :muscle:: ${user.STR}\nDEX :bow_and_arrow:: ${user.DEX}\nINT :book:: ${user.INT}\nWIZ :brain:: ${user.WIZ}\nStage: :european_castle:: ${user.stage}\nCurrent Equipment: ${user.weapon}, ${user.hat}, ${user.armor}.`;
+        try {
+            const user = await Characters.findOne({
+                where: { user_id: this.user_id },
+            });
+            return `Gold :coin:: ${user.gold}\nSTR :muscle:: ${user.STR}\nDEX :bow_and_arrow:: ${user.DEX}\nINT :book:: ${user.INT}\nWIZ :brain:: ${user.WIZ}\nStage: :european_castle:: ${user.stage}\nCurrent Equipment: ${user.weapon}, ${user.hat}, ${user.armor}.\nStreak :fire:: ${user.streak}`;
+        } catch (error) {
+            console.error(error);
+        }
     },
 });
 
@@ -113,7 +123,6 @@ Reflect.defineProperty(Characters.prototype, 'removeTask', {
         const target = await Tasks.findOne({
             where: { user_id: this.user_id, task_name: task }
         })
-        console.log(target);
         if (target) {
             await target.destroy();
             return true;
@@ -122,4 +131,4 @@ Reflect.defineProperty(Characters.prototype, 'removeTask', {
         }
     }
 })
-module.exports = { Characters, Inventories, Tasks, Items }
+module.exports = { Characters, Inventories, Tasks, Items, Dailies }
