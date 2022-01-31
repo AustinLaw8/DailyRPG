@@ -74,10 +74,8 @@ module.exports = {
                 case 'complete':
                     if (await user.completeDaily(interaction.options.getString('daily'))) {
                         user.gold += 1
-                        let completed = 0;
+                        let completed = 1;
                         d.forEach(element => { 
-                            console.log(element.name);
-                            console.log(element.done);
                             if (element.done) completed += 1; 
                         });
                         if (completed === d.size) {
