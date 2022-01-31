@@ -188,4 +188,22 @@ Reflect.defineProperty(Characters.prototype, 'completeDaily', {
     }
 })
 
+Reflect.defineProperty(Characters.prototype, 'resetDaily', {
+    /* eslint-disable-next-line func-name-matching */
+    value: async function resetDaily() {
+        try {
+            const dailies = await Dailies.findAll({
+                where: { user_id: this.user_id },
+            });
+            dailies.forEach(d => {
+                d.done = false;
+                await d.save();
+            })
+            return true;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    }
+})
 module.exports = { Characters, Inventories, Tasks, Items, Dailies }

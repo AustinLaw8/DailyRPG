@@ -21,10 +21,13 @@ for (const file of adminCommandFiles) {
 }
 
 const characters = new Collection();
+const didDailies = new Set();
 // const inventories = new Collection();
 const items = new Collection();
 const parser = /([PH],)?([+-][0-9]+[,]){3}([+-][0-9]+)/;
 const rarities = ["N", "R", "SR", "SSR", "UR", "LR"]
+const tomorrowFromAppStart = new Date()
+const oneDay = 1000 * 60 * 60 * 24;
 
 Reflect.defineProperty(characters, 'create', {
     /* eslint-disable-next-line func-name-matching */
@@ -60,7 +63,16 @@ Reflect.defineProperty(characters, 'roll', {
 })
 
 async function resetDailies() {
-
+    characters.forEach( c => {
+        if (!didDailies.has(c.name)) {
+            c.streak -= 1
+            await c.save();
+            didDailies.delete(c.name);
+        }
+        await c.resetDaily()
+            .then( () => console.log("Dailies sucessfuly reset") )
+            .catch( (error) => console.error(error) );
+    })
 }
 
 client.once('ready', async () => {
@@ -74,7 +86,18 @@ client.once('ready', async () => {
             items.get(b.rarity).push(b);
     });
 
-
+    tomorrowFromAppStart.setDate(tomorrowFromAppStart.getDate() + 1)
+    tomorrowFromAppStart.setHours(0)
+    tomorrowFromAppStart.setMinutes(0)
+    tomorrowFromAppStart.setSeconds(0)
+    tomorrowFromAppStart.setMilliseconds(0)
+    console.log(tomorrowFromAppStart);
+    const expirationTime = (tomorrowFromAppStart.getTime() - new Date().getTime()) / 1000;
+    const hours = Math.floor(expirationTime / 3600);
+    const minutes = Math.floor((expirationTime / 60) % 60)
+    const seconds = Math.floor(expirationTime % 60);
+    console.log(`Time until next day: ${hours} hours, ${minutes} minutes, and ${seconds} seconds`);
+    setTimeout(resetDailies, expirationTime);
     // const i = await Inventory.findAll();
     // i.forEach(b => inventories.set(b.user_id, b));
 
@@ -145,7 +168,7 @@ client.on('interactionCreate', async interaction => {
             }
             await command.execute(interaction, characters);
         } else if (command.data.name === 'daily') {
-            await command.execute(interaction, characters);
+            await command.execute(interaction, characters, didDailies);
         } else {
             await command.execute(interaction);
         }

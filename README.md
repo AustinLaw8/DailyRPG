@@ -46,11 +46,11 @@ There are two important groups of commands: `task` and `rpg`. Invoking _just_ `/
 - [ ] Add more items to the gacha list
 - [ ] Implement nicely formatted embedded messages
 - [ ] Implement nicely formatted embedded messages especially for /rpg itemlist
-- [ ] Implement dailies
-- [ ] Daily Streaks
+- [x] Implement dailies - make them reset everyday
+- [x] Daily Streaks
+- [ ] Implement equipping stuff
 - [x] Implement fight attempts
 - [ ] Implement limited fight attempts
-- [ ] Task add currently overrides duplicates
 - [x] Remind command
 - [ ] Reminds built into tasks
 - [ ] Help command

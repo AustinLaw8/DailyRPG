@@ -43,7 +43,7 @@ module.exports = {
                         .setRequired(true)
                 )
         ),
-    async execute(interaction, characters) {
+    async execute(interaction, characters, didDailies) {
         try {
             const user = characters.get(interaction.user.id);
             if (!user) { return interaction.reply('You don\'t have a character! Use `/rpg create` to make one!'); }
@@ -78,7 +78,9 @@ module.exports = {
                         d.forEach(element => { if (element.done) completed += 1; });
                         if (completed === d.size) {
                             user.gold += 1;
+                            user.streak += 1;
                             await user.save();
+                            didDailies.add(user.name);
                             await interaction.reply(`Daily ${interaction.options.getString('daily')} completed! +1 Gold`);
                             return interaction.followUp(`Congrats, you finished all your dailies! Have 1 more gold!`);
                         }
