@@ -144,6 +144,8 @@ client.on('interactionCreate', async interaction => {
                 return interaction.reply(r.join('\n'));
             }
             await command.execute(interaction, characters);
+        } else if (command.data.name === 'daily') {
+            await command.execute(interaction, characters);
         } else {
             await command.execute(interaction);
         }
