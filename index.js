@@ -26,7 +26,6 @@ const didDailies = new Set();
 const items = new Collection();
 const parser = /([PH],)?([+-][0-9]+[,]){3}([+-][0-9]+)/;
 const rarities = ["N", "R", "SR", "SSR", "UR", "LR"]
-const tomorrowFromAppStart = new Date()
 const oneDay = 1000 * 60 * 60 * 24;
 
 Reflect.defineProperty(characters, 'create', {
@@ -87,23 +86,21 @@ client.once('ready', async () => {
             items.get(b.rarity).push(b);
     });
 
-    //FIXME:
-    // get UTC time
-    // Convert to PST
-    // Go to tmr for PST start time
-    // subtract tmr from now to get time to first rest
-    tomorrowFromAppStart.setDate(tomorrowFromAppStart.getDate() + 1)
-    tomorrowFromAppStart.setHours(0)
-    tomorrowFromAppStart.setMinutes(0)
-    tomorrowFromAppStart.setSeconds(0)
-    tomorrowFromAppStart.setMilliseconds(0)
-    console.log(tomorrowFromAppStart);
-    const expirationTime = (tomorrowFromAppStart.getTime() - new Date().getTime()) / 1000;
+    const now = new Date();
+    now.setUTCHours(now.getUTCHours() - 8)
+    console.log(now)
+    const d = new Date(now);
+    d.setUTCDate(d.getUTCDate() + 1) 
+    d.setUTCHours(0)
+    d.setUTCMinutes(0)
+    d.setUTCSeconds(0)
+    d.setUTCMilliseconds(0)
+    const expirationTime = (d.getTime() - now.getTime()) / 1000;
     const hours = Math.floor(expirationTime / 3600);
     const minutes = Math.floor((expirationTime / 60) % 60)
     const seconds = Math.floor(expirationTime % 60);
     console.log(`Time until next day: ${hours} hours, ${minutes} minutes, and ${seconds} seconds`);
-    setTimeout(resetDailies, tomorrowFromAppStart.getTime() - new Date().getTime());
+    setTimeout(resetDailies, expirationTime * 1000);
     // const i = await Inventory.findAll();
     // i.forEach(b => inventories.set(b.user_id, b));
 
