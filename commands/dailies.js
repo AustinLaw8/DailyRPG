@@ -38,8 +38,8 @@ module.exports = {
                 .setDescription('Remove a daily.')
                 .addStringOption(option =>
                     option
-                        .setName('task')
-                        .setDescription('The task you want to remove')
+                        .setName('daily')
+                        .setDescription('The daily you want to remove')
                         .setRequired(true)
                 )
         ),

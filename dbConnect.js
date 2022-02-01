@@ -162,6 +162,8 @@ Reflect.defineProperty(Characters.prototype, 'removeDaily', {
         const target = await Dailies.findOne({
             where: { user_id: this.user_id, daily_name: daily }
         })
+        console.log(daily);
+        console.log(target);
         if (target) {
             await target.destroy();
             return true;
