@@ -75,16 +75,19 @@ module.exports = {
                     if (await user.completeDaily(interaction.options.getString('daily'))) {
                         user.gold += 1
                         let completed = 1;
+                        let numDailies = 0;
                         d.forEach(element => { 
+                            numDailies += 1
                             if (element.done) completed += 1; 
                         });
-                        if (completed === d.size) {
+                        if (completed === numDailies) {
                             user.gold += 1;
                             user.streak += 1;
                             await user.save();
                             didDailies.add(user.name);
+                            console.log('streaked')
                             await interaction.reply(`Daily ${interaction.options.getString('daily')} completed! +1 Gold`);
-                            return interaction.followUp(`Congrats, you finished all your dailies! Have 1 more gold!`);
+                            return interaction.followUp(`Congrats, you finished all your dailies; streak extended! Have 1 more gold!`);
                         }
                         await user.save();
                         return interaction.reply(`Daily ${interaction.options.getString('daily')} completed! +1 Gold`);
