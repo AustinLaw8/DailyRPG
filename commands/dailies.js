@@ -80,11 +80,11 @@ module.exports = {
                             numDailies += 1
                             if (element.done) completed += 1; 
                         });
-                        if (completed === numDailies) {
+                        if (completed === numDailies && !didDailies.has(user.user_id)) {
                             user.gold += 1;
                             user.streak += 1;
                             await user.save();
-                            didDailies.add(user.name);
+                            didDailies.add(user.user_id);
                             console.log('streaked')
                             await interaction.reply(`Daily ${interaction.options.getString('daily')} completed! +1 Gold`);
                             return interaction.followUp(`Congrats, you finished all your dailies; streak extended! Have 1 more gold!`);
