@@ -159,11 +159,10 @@ Reflect.defineProperty(Characters.prototype, 'removeTask', {
 Reflect.defineProperty(Characters.prototype, 'removeDaily', {
     /* eslint-disable-next-line func-name-matching */
     value: async function removeDaily(daily) {
-        const target = await Tasks.findOne({
+        const target = await Dailies.findOne({
             where: { user_id: this.user_id, daily_name: daily }
         })
         if (target) {
-            if (target.done) return false;
             await target.destroy();
             return true;
         } else {
