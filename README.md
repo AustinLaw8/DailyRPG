@@ -57,6 +57,7 @@ There are two important groups of commands: `task` and `rpg`. Invoking _just_ `/
 - [ ] Add error catches for everything that could go wrong
 - [x] Change fight algorithm
 - [x] Add a message for auto-used items
+- [ ] Remove timeout on tasks, add custom timeouts
 
 # Important Commands
 

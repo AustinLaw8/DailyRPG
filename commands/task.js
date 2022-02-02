@@ -66,8 +66,9 @@ module.exports = {
                     }
                 case 'list':
                     if (curTasks.length > 0) {
-                        // console.log(await interaction.user.fetch().then( (u) => {return u.accentColor;} ));
-                        const embedReply = new MessageEmbed().setTitle('Your todo list');
+                        const embedReply = new MessageEmbed()
+                            .setTitle(`${interaction.user.tag}'s todo list:`)
+                            .setColor(await interaction.user.fetch().then((u) => { return u.accentColor; }));
                         const replyString = Array.from(curTasks, (x) => {
                             const timeoutT = new Date(x.timeout);
                             const expirationTime = (timeoutT.getTime() - date.getTime()) / 1000;
@@ -78,7 +79,6 @@ module.exports = {
                         }).join("\n");
                         embedReply.setTimestamp().setFooter({ text: errorMsg })
                         return interaction.reply({
-                            content: `${interaction.user}`,
                             embeds: [embedReply],
                         })
                     } else {
