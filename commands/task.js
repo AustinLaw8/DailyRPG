@@ -1,6 +1,7 @@
-const { SlashCommandBuilder, time } = require('@discordjs/builders');
-const { Formatters } = require('discord.js')
+const { SlashCommandBuilder, channelMention } = require('@discordjs/builders');
+const { MessageEmbed, Formatters } = require('discord.js')
 const oneDay = 1000 * 60 * 60 * 24;
+const errorMsg = 'Problems? Message @Eagle [Austin] with the command you ran!';
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -50,7 +51,7 @@ module.exports = {
             const date = new Date();
             const curTasks = await user.getTasks();
             switch (interaction.options.getSubcommand()) {
-                case 'add': //FIXME: currently overrides duplicates; 
+                case 'add':
                     const taskToAdd = interaction.options.getString('task');
                     const taskAdded = await user.addTask(taskToAdd);
                     if (taskAdded) {
@@ -65,15 +66,21 @@ module.exports = {
                     }
                 case 'list':
                     if (curTasks.length > 0) {
+                        // console.log(await interaction.user.fetch().then( (u) => {return u.accentColor;} ));
+                        const embedReply = new MessageEmbed().setTitle('Your todo list');
                         const replyString = Array.from(curTasks, (x) => {
                             const timeoutT = new Date(x.timeout);
                             const expirationTime = (timeoutT.getTime() - date.getTime()) / 1000;
                             const hours = Math.floor(expirationTime / 3600);
                             const minutes = Math.floor((expirationTime / 60) % 60)
                             const seconds = Math.floor(expirationTime % 60);
-                            return `+ ${x.task_name}, expires in ${hours} hours, ${minutes} minutes, and ${seconds} seconds`;
+                            embedReply.addField(x.task_name, `Expires in ${hours} hours, ${minutes} minutes, and ${seconds} seconds`);
                         }).join("\n");
-                        return interaction.reply(`Current todo list:\`\`\`markdown\n${replyString}\`\`\``);
+                        embedReply.setTimestamp().setFooter({ text: errorMsg })
+                        return interaction.reply({
+                            content: `${interaction.user}`,
+                            embeds: [embedReply],
+                        })
                     } else {
                         return interaction.reply('You don\'t have any tasks for today!');
                     }

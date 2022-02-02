@@ -21,7 +21,6 @@ for (const file of adminCommandFiles) {
 }
 
 const characters = new Collection();
-const didDailies = new Set();
 // const inventories = new Collection();
 const items = new Collection();
 const parser = /([PH],)?([+-][0-9]+[,]){3}([+-][0-9]+)/;
@@ -63,15 +62,15 @@ Reflect.defineProperty(characters, 'roll', {
 
 async function resetDailies() {
     characters.forEach(async (c) => {
-        if (!didDailies.has(c.name)) {
+        if (!c.didDailies) {
             c.streak = 0
+            c.didDailies = false;
             await c.save();
         }
         await c.resetDaily()
             .then(() => console.log("Dailies sucessfuly reset"))
             .catch((error) => console.error(error));
     })
-    didDailies.clear();
     setTimeout(resetDailies, oneDay);
 }
 
@@ -171,7 +170,7 @@ client.on('interactionCreate', async interaction => {
             }
             await command.execute(interaction, characters);
         } else if (command.data.name === 'daily') {
-            await command.execute(interaction, characters, didDailies);
+            await command.execute(interaction, characters);
         } else {
             await command.execute(interaction);
         }

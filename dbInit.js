@@ -57,6 +57,11 @@ sequelize.sync({ force }).then(async () => {
     //     allowNull: false
     // });
     // await Dailies.upsert({ user_id: "null", daily_name: "null", done: false })
+    // await queryInterface.addColumn('characters', 'didDailies', {
+    //     type: Sequelize.DataTypes.BOOLEAN,
+    //     defaultValue: false,
+    //     allowNull: false
+    // });
     console.log("Database initialized");
     sequelize.close();
 }).catch(console.error);

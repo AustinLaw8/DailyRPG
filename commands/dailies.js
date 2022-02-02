@@ -43,7 +43,7 @@ module.exports = {
                         .setRequired(true)
                 )
         ),
-    async execute(interaction, characters, didDailies) {
+    async execute(interaction, characters) {
         try {
             const user = characters.get(interaction.user.id);
             if (!user) { return interaction.reply('You don\'t have a character! Use `/rpg create` to make one!'); }
@@ -80,12 +80,11 @@ module.exports = {
                             numDailies += 1
                             if (element.done) completed += 1; 
                         });
-                        if (completed === numDailies && !didDailies.has(user.user_id)) {
+                        if (completed === numDailies && !user.didDailies) {
                             user.gold += 1;
                             user.streak += 1;
+                            user.didDailies = true;
                             await user.save();
-                            didDailies.add(user.user_id);
-                            console.log('streaked')
                             await interaction.reply(`Daily ${interaction.options.getString('daily')} completed! +1 Gold`);
                             return interaction.followUp(`Congrats, you finished all your dailies; streak extended! Have 1 more gold!`);
                         }
