@@ -75,7 +75,7 @@ module.exports = {
                     if (await user.removeDaily(interaction.options.getString('daily'))) {
                         return interaction.reply(`Daily ${interaction.options.getString('daily')} deleted!`);
                     } else {
-                        return interaction.reply("Failed to remove daily for some reason... (name probably wasn't found, or maybe you tried deleting a daily that you have completed already! In that case, try again tomorrow.)");
+                        return interaction.reply("Failed to remove daily for some reason... (name probably wasn't found)");
                     }
                 case 'complete':
                     if (await user.completeDaily(interaction.options.getString('daily'))) {

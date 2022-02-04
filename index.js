@@ -88,8 +88,8 @@ client.once('ready', async () => {
         r.forEach((b) => {
             if (b.user_id !== "null") {
                 const sendTime = b.timeout.getTime() - curTime;
+                console.log(`${b.reminder}, ${new Date(b.timeout).toString()}`)
                 setTimeout(async (b) => {
-                    console.log(`${b.reminder}`)
                     const u = await client.users.fetch(b.user_id);
                     const c = await client.channels.fetch(b.channel);
                     c.send(`${u}, ${b.reminder}`);
