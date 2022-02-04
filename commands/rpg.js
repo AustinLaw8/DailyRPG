@@ -1,5 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { MessageEmbed } = require('discord.js')
 const enemies = ["Slimy Slime", "Devilish Rat", "Impertinent Owl", "Wicked Wolf"]
+const errorMsg = 'Problems? Message @Eagle [Austin] with the command you ran!';
 const multiplier = 1.25;
 const getMinStatsBase = (stage) => {
     return Math.floor(stage ** (5 / 4));
@@ -76,8 +78,29 @@ module.exports = {
             switch (interaction.options.getSubcommand()) {
                 case 'profile':
                     // get and display Character
-                    const replyString = await user.getStats();
-                    return interaction.reply(`${target.tag}'s Character:\n${replyString}`);
+                    const embedReply = new MessageEmbed()
+                        .setTitle(`${interaction.user.tag}'s Character:`)
+                        .setColor(await interaction.user.fetch().then((u) => { return u.accentColor; }))
+                        .addField('Gold :coin:', `${user.gold}`, true)
+                        .addField('Streak :fire:', `${user.streak}`, true)
+                        .addField('Stage: :european_castle:', `${user.stage}`, true)
+                        .addField('-------------------------------------------------','Character Stats')
+                        .addField('STR :muscle:', `${user.STR}`, true)
+                        .addField('DEX :bow_and_arrow:', `${user.DEX}`,true)
+                        .addField('\u200B', '\u200B', true)
+                        .addField('INT :book:', `${user.INT}`, true)
+                        .addField('WIZ :brain:', `${user.WIZ}`, true)
+                        .addField('\u200B', '\u200B', true)
+                        .addField('-------------------------------------------------','Current Equipment:')
+                        .addField('Weapon :dagger:', `${user.weapon}`, true)
+                        .addField('Hat :billed_cap:', `${user.hat}`, true)
+                        .addField('Armor :shield:', `${user.armor}`,true)
+                        .setTimestamp()
+                        .setFooter({ text: errorMsg });
+                    
+                    return interaction.reply({
+                        embeds: [embedReply],
+                    });
                 case 'roll':
                     // get Character, check and subtract gold
                     let autoUsed = 0;
@@ -126,10 +149,11 @@ module.exports = {
                     return interaction.reply(`${target.tag} currently has ${userInv.map(i => `${i.amount} ${i.item.name}`).join(', ')}`);
                 case 'fight':
                     // Fight next opponent
+                    let minStatsBase = getMinStatsBase(user.stage)
                     const rPick = Math.floor(Math.random() * 4);
                     const opponent = enemies[rPick];
                     const userStats = [user.STR, user.DEX, user.INT, user.WIZ];
-                    let need = Math.floor(getMinStatsBase(user.stage) * 4.25);
+                    let need = Math.floor(minStatsBase * 4.25);
                     let extraStat = 0;
                     if (Math.max.apply(null, userStats) > minStatsBase * 3) {
                         need = 0;

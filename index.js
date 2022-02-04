@@ -3,7 +3,6 @@ const { Client, Collection, Intents } = require('discord.js');
 const { Characters, Inventories, Tasks, Items, Dailies, Reminders } = require('./dbConnect.js');
 const dotenv = require('dotenv');
 const { Op } = require('sequelize');
-const remind = require('./commands/remind.js');
 
 dotenv.config();
 
@@ -83,18 +82,18 @@ client.once('ready', async () => {
         if (b.rarity !== "XR")
             items.get(b.rarity).push(b);
     });
-    
+
     const curTime = new Date().getTime();
-    await Reminders.findAll().then( (r) => {
-        r.forEach( (b) => {
-            if (b.user_id !== "null"){
+    await Reminders.findAll().then((r) => {
+        r.forEach((b) => {
+            if (b.user_id !== "null") {
                 const sendTime = b.timeout.getTime() - curTime;
-                setTimeout( async (b) => {
+                setTimeout(async (b) => {
                     const u = await client.users.fetch(b.user_id);
                     const c = await client.channels.fetch(b.channel);
                     c.send(`${u}, ${b.reminder}`);
                     await b.destroy();
-                }, sendTime < 0 ? sendTime : 0 , b)
+                }, sendTime < 0 ? sendTime : 0, b)
             }
         });
     });

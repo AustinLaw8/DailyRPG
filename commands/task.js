@@ -1,5 +1,5 @@
-const { SlashCommandBuilder, channelMention } = require('@discordjs/builders');
-const { MessageEmbed, Formatters } = require('discord.js')
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { MessageEmbed } = require('discord.js')
 const oneDay = 1000 * 60 * 60 * 24;
 const errorMsg = 'Problems? Message @Eagle [Austin] with the command you ran!';
 
@@ -67,15 +67,19 @@ module.exports = {
                         curTasks.forEach((x) => {
                             const timeoutT = new Date(x.timeout);
                             const expirationTime = (timeoutT.getTime() - date.getTime()) / 1000;
-                            const hours = Math.floor(expirationTime / 3600);
-                            const minutes = Math.floor((expirationTime / 60) % 60)
-                            const seconds = Math.floor(expirationTime % 60);
-                            embedReply.addField(x.task_name, `Expires in: ${hours}:${minutes}:${seconds}`);
+                            if (expirationTime < 0) {
+                                embedReply.addField(x.task_name, `Timeout :no_entry_sign:! Hurry up and finish your work!`);
+                            } else {
+                                const hours = Math.floor(expirationTime / 3600);
+                                const minutes = Math.floor((expirationTime / 60) % 60)
+                                const seconds = Math.floor(expirationTime % 60);
+                                embedReply.addField(x.task_name, `Time left: ${hours}:${minutes}:${seconds}`);
+                            }
                         });
-                        embedReply.setTimestamp().setFooter({ text: errorMsg })
+                        embedReply.setTimestamp().setFooter({ text: errorMsg });
                         return interaction.reply({
                             embeds: [embedReply],
-                        })
+                        });
                     } else {
                         return interaction.reply('You don\'t have any tasks for today!');
                     }

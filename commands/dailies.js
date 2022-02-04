@@ -1,6 +1,7 @@
-const { SlashCommandBuilder, time } = require('@discordjs/builders');
-const { Formatters } = require('discord.js')
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { MessageEmbed } = require('discord.js')
 const oneDay = 1000 * 60 * 60 * 24;
+const errorMsg = 'Problems? Message @Eagle [Austin] with the command you ran!';
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -57,11 +58,16 @@ module.exports = {
                         return interaction.reply("Failed to add daily for some reason...");
                 case 'list': 
                     if (d.length > 0) {
-                        const replyString = Array.from(d, (x) => {
-                            const prepend = x.done ? '[x]' : '[ ]'
-                            return `- ${prepend} ${x.daily_name}`;
-                        }).join("\n");
-                        return interaction.reply(`Today's work:\`\`\`markdown\n${replyString}\`\`\``);
+                        const embedReply = new MessageEmbed()
+                            .setTitle(`${interaction.user.tag}'s dailies:`)
+                            .setColor(await interaction.user.fetch().then((u) => { return u.accentColor; }));
+                        d.forEach((x) => {
+                            embedReply.addField(x.daily_name, x.done ? 'Done :white_check_mark:!' : 'In progress :pencil2: ...');
+                        });
+                        embedReply.setTimestamp().setFooter({ text: errorMsg })
+                        return interaction.reply({
+                            embeds: [embedReply],
+                        });
                     } else {
                         return interaction.reply('You don\'t have any dailies set!');
                     }

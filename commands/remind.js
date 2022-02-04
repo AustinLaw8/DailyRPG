@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, channelMention } = require('@discordjs/builders');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -38,7 +38,7 @@ module.exports = {
             channel: interaction.channel.id,
             reminder: interaction.options.getString('string'),
             timeout: new Date().getTime() + totalTime,
-        }).then((r) => { 
+        }).then((r) => {
             return r;
         }).catch((error) => console.error(error));
         setTimeout(async (user, channel, response, r) => {
