@@ -69,7 +69,7 @@ Reflect.defineProperty(Characters.prototype, 'addItem', {
 
 Reflect.defineProperty(Characters.prototype, 'addTask', {
     /* eslint-disable-next-line func-name-matching */
-    value: async function addTask(task) {
+    value: async function addTask(task, timeout) {
         const userTask = await Tasks.findOne({
             where: { user_id: this.user_id, task_name: task },
         });
@@ -77,8 +77,7 @@ Reflect.defineProperty(Characters.prototype, 'addTask', {
         if (userTask) {
             return null;
         } else {
-            const date = new Date();
-            return Tasks.create({ user_id: this.user_id, task_name: task, timeout: date.getTime() + oneDay })
+            return Tasks.create({ user_id: this.user_id, task_name: task, timeout: new Date().getTime() + timeout })
         }
     }
 })

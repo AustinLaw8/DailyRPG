@@ -79,7 +79,7 @@ module.exports = {
                 case 'profile':
                     // get and display Character
                     const embedReply = new MessageEmbed()
-                        .setTitle(`${interaction.user.tag}'s Character:`)
+                        .setTitle(`${target.tag}'s Character:`)
                         .setColor(await interaction.user.fetch().then((u) => { return u.accentColor; }))
                         .addField('Gold :coin:', `${user.gold}`, true)
                         .addField('Streak :fire:', `${user.streak}`, true)

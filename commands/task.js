@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js')
+const oneMinute = 1000 * 60;
 const oneDay = 1000 * 60 * 60 * 24;
 const errorMsg = 'Problems? Message @Eagle [Austin] with the command you ran!';
 
@@ -10,12 +11,30 @@ module.exports = {
         .addSubcommand(subcommand =>
             subcommand
                 .setName('add')
-                .setDescription('Add a new task for today!')
+                .setDescription('Add a new task you want to complete within a given timeframe (default 24 hours)!')
                 .addStringOption(option =>
                     option
                         .setName('task')
                         .setDescription('The task you want to add')
                         .setRequired(true)
+                )
+                .addIntegerOption(option =>
+                    option
+                        .setName('minutes')
+                        .setDescription('Number of minutes')
+                        .setRequired(false)
+                )
+                .addIntegerOption(option =>
+                    option
+                        .setName('hours')
+                        .setDescription('Number of hours')
+                        .setRequired(false)
+                )
+                .addIntegerOption(option =>
+                    option
+                        .setName('days')
+                        .setDescription('Number of days')
+                        .setRequired(false)
                 )
         )
         .addSubcommand(subcommand =>
@@ -53,7 +72,15 @@ module.exports = {
             switch (interaction.options.getSubcommand()) {
                 case 'add':
                     const taskToAdd = interaction.options.getString('task');
-                    const taskAdded = await user.addTask(taskToAdd);
+                    let totalTime = 0;
+                    const minutes = interaction.options.getInteger('minutes');
+                    const hours = interaction.options.getInteger('hours');
+                    const days = interaction.options.getInteger('days');
+                    if (minutes) totalTime += oneMinute * minutes;
+                    if (hours) totalTime += oneMinute * 60 * hours
+                    if (days) totalTime += oneMinute * 60 * 24 * days
+                    if (totalTime === 0) totalTime = oneDay;
+                    const taskAdded = await user.addTask(taskToAdd, totalTime);
                     if (taskAdded) {
                         return interaction.reply(`Task ${taskToAdd} successfully added!`);
                     } else {
