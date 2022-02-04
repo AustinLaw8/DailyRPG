@@ -1,5 +1,5 @@
 /* Characters
- * | user_id (string) | STR (int) | DEX (int) | INT (int) | WIZ (int) | Gold (int) | Stage (int) | 
+ * | user_id (string) | STR (int) | DEX (int) | INT (int) | WIZ (int) | Gold (int) | Stage (int) | weapon, armor, hat TODO | streak (int) | didDailies (bool) |
  * Eventually, we want hat and armor 
  */
 

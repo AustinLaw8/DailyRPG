@@ -37,6 +37,7 @@ const Characters = require('./data/Characters.js')(sequelize, Sequelize.DataType
 const Items = require('./data/Items.js')(sequelize, Sequelize.DataTypes);
 const Tasks = require('./data/Tasks.js')(sequelize, Sequelize.DataTypes);
 const Dailies = require('./data/Dailies.js')(sequelize, Sequelize.DataTypes);
+const Reminders = require('./data/Reminders.js')(sequelize, Sequelize.DataTypes);
 
 const force = process.argv.includes('--force') || process.argv.includes('-f');
 sequelize.sync({ force }).then(async () => {
@@ -62,6 +63,7 @@ sequelize.sync({ force }).then(async () => {
     //     defaultValue: false,
     //     allowNull: false
     // });
+    await Reminders.upsert({ user_id: "null", task_name: "null", timeout: new Date().getTime() })
     console.log("Database initialized");
     sequelize.close();
 }).catch(console.error);

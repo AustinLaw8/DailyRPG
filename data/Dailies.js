@@ -1,5 +1,5 @@
-/* Tasks 
- * | user_id (str) | task_name (str) | timeout (date) | 
+/* Dailies 
+ * | user_id (str) | daily_name (str) | done (bool) | 
  */
 
 module.exports = (sequelize, DataTypes) => {

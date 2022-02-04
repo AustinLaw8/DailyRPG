@@ -13,7 +13,6 @@
 
 const Sequelize = require('sequelize');
 const dotenv = require('dotenv');
-const { user } = require('pg/lib/defaults');
 dotenv.config();
 const oneDay = 1000 * 60 * 60 * 24;
 
@@ -31,7 +30,7 @@ const Inventories = require('./data/Inventory.js')(sequelize, Sequelize.DataType
 const Items = require('./data/Items.js')(sequelize, Sequelize.DataTypes);
 const Tasks = require('./data/Tasks.js')(sequelize, Sequelize.DataTypes);
 const Dailies = require('./data/Dailies.js')(sequelize, Sequelize.DataTypes);
-
+const Reminders = require('./data/Reminders.js')(sequelize, Sequelize.DataTypes);
 
 sequelize.authenticate()
     .then(() => { console.log('Connection has been established successfully.'); })
@@ -205,4 +204,4 @@ Reflect.defineProperty(Characters.prototype, 'resetDaily', {
         }
     }
 })
-module.exports = { Characters, Inventories, Tasks, Items, Dailies }
+module.exports = { Characters, Inventories, Tasks, Items, Dailies, Reminders }

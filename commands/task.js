@@ -55,11 +55,6 @@ module.exports = {
                     const taskToAdd = interaction.options.getString('task');
                     const taskAdded = await user.addTask(taskToAdd);
                     if (taskAdded) {
-                        setTimeout((taskAdded) => {
-                            taskAdded.destroy()
-                        },
-                            oneDay, taskAdded,
-                        );
                         return interaction.reply(`Task ${taskToAdd} successfully added!`);
                     } else {
                         return interaction.reply("Failed to add task for some reason...");
@@ -69,14 +64,14 @@ module.exports = {
                         const embedReply = new MessageEmbed()
                             .setTitle(`${interaction.user.tag}'s todo list:`)
                             .setColor(await interaction.user.fetch().then((u) => { return u.accentColor; }));
-                        const replyString = Array.from(curTasks, (x) => {
+                        curTasks.forEach((x) => {
                             const timeoutT = new Date(x.timeout);
                             const expirationTime = (timeoutT.getTime() - date.getTime()) / 1000;
                             const hours = Math.floor(expirationTime / 3600);
                             const minutes = Math.floor((expirationTime / 60) % 60)
                             const seconds = Math.floor(expirationTime % 60);
-                            embedReply.addField(x.task_name, `Expires in ${hours} hours, ${minutes} minutes, and ${seconds} seconds`);
-                        }).join("\n");
+                            embedReply.addField(x.task_name, `Expires in: ${hours}:${minutes}:${seconds}`);
+                        });
                         embedReply.setTimestamp().setFooter({ text: errorMsg })
                         return interaction.reply({
                             embeds: [embedReply],

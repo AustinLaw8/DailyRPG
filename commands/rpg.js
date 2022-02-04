@@ -126,28 +126,31 @@ module.exports = {
                     return interaction.reply(`${target.tag} currently has ${userInv.map(i => `${i.amount} ${i.item.name}`).join(', ')}`);
                 case 'fight':
                     // Fight next opponent
-                    const minStatsBase = getMinStatsBase(user.stage);
                     const rPick = Math.floor(Math.random() * 4);
                     const opponent = enemies[rPick];
                     const userStats = [user.STR, user.DEX, user.INT, user.WIZ];
-                    let won = true;
+                    let need = Math.floor(getMinStatsBase(user.stage) * 4.25);
+                    let extraStat = 0;
                     if (Math.max.apply(null, userStats) > minStatsBase * 3) {
-                        won = true;
+                        need = 0;
                     } else {
                         for (let i = 0; i < 4; i++) {
                             if (i === rPick) {
-                                if (userStats[i] < Math.floor(minStatsBase * multiplier)) {
-                                    won = false
+                                const temp = Math.floor(minStatsBase * multiplier);
+                                if(userStats[i] > temp){
+                                    need -= temp
+                                    extraStat += userStats[i] - temp;
                                 }
                             } else {
-                                if (userStats[i] < minStatsBase) {
-                                    won = false;
+                                if(userStats[i] > minStatsBase){
+                                    need -= minStatsBase;
+                                    extraStat = userStats[i] - minStatsBase;
                                 }
                             }
                         }
                     }
                     const s = user.stage;
-                    if (won) {
+                    if (extraStat >= need) {
                         user.stage += 1;
                         await user.save();
                         setTimeout((interaction, s, opponent) => {

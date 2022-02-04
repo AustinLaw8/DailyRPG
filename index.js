@@ -1,8 +1,9 @@
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
-const { Characters, Inventories, Tasks, Items, Dailies } = require('./dbConnect.js');
+const { Characters, Inventories, Tasks, Items, Dailies, Reminders } = require('./dbConnect.js');
 const dotenv = require('dotenv');
 const { Op } = require('sequelize');
+const remind = require('./commands/remind.js');
 
 dotenv.config();
 
@@ -62,11 +63,9 @@ Reflect.defineProperty(characters, 'roll', {
 
 async function resetDailies() {
     characters.forEach(async (c) => {
-        if (!c.didDailies) {
-            c.streak = 0
-            c.didDailies = false;
-            await c.save();
-        }
+        if (!c.didDailies) c.streak = 0;
+        c.didDailies = false;
+        await c.save();
         await c.resetDaily()
             .then(() => console.log("Dailies sucessfuly reset"))
             .catch((error) => console.error(error));
@@ -84,12 +83,27 @@ client.once('ready', async () => {
         if (b.rarity !== "XR")
             items.get(b.rarity).push(b);
     });
+    
+    const curTime = new Date().getTime();
+    await Reminders.findAll().then( (r) => {
+        r.forEach( (b) => {
+            if (b.user_id !== "null"){
+                const sendTime = b.timeout.getTime() - curTime;
+                setTimeout( async (b) => {
+                    const u = await client.users.fetch(b.user_id);
+                    const c = await client.channels.fetch(b.channel);
+                    c.send(`${u}, ${b.reminder}`);
+                    await b.destroy();
+                }, sendTime < 0 ? sendTime : 0 , b)
+            }
+        });
+    });
 
     const now = new Date();
     now.setUTCHours(now.getUTCHours() - 8)
     console.log(now)
     const d = new Date(now);
-    d.setUTCDate(d.getUTCDate() + 1) 
+    d.setUTCDate(d.getUTCDate() + 1)
     d.setUTCHours(0)
     d.setUTCMinutes(0)
     d.setUTCSeconds(0)
@@ -171,6 +185,8 @@ client.on('interactionCreate', async interaction => {
             await command.execute(interaction, characters);
         } else if (command.data.name === 'daily') {
             await command.execute(interaction, characters);
+        } else if (command.data.name === 'remind') {
+            await command.execute(interaction, Reminders, client);
         } else {
             await command.execute(interaction);
         }
