@@ -89,11 +89,12 @@ client.once('ready', async () => {
             if (b.user_id !== "null") {
                 const sendTime = b.timeout.getTime() - curTime;
                 setTimeout(async (b) => {
+                    console.log(`${b.reminder}`)
                     const u = await client.users.fetch(b.user_id);
                     const c = await client.channels.fetch(b.channel);
                     c.send(`${u}, ${b.reminder}`);
                     await b.destroy();
-                }, sendTime < 0 ? sendTime : 0, b)
+                }, sendTime < 0 ? 0 : sendTime, b)
             }
         });
     });

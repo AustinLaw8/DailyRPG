@@ -1,39 +1,46 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const oneMinute = 1000 * 60;
+const oneDay = oneMinute * 60 * 24;
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('remind')
-        .setDescription('Reminds of... something')
+        .setDescription('Reminds you of...something... in the given time (default 24 hours)')
         .addStringOption(option =>
             option
                 .setName('string')
                 .setDescription('Whatever you want to be reminded of')
                 .setRequired(true)
         )
-        .addStringOption(option =>
+        .addIntegerOption(option => 
             option
-                .setName('time')
-                .setDescription('Format: X X X representing Minutes Hours Days; larger time frames can be dropped if not needed.')
-                .setRequired(true)
+                .setName('minutes')
+                .setDescription('Number of minutes')
+                .setRequired(false)
+        )
+        .addIntegerOption(option => 
+            option
+                .setName('hours')
+                .setDescription('Number of hours')
+                .setRequired(false)
+        )
+        .addIntegerOption(option => 
+            option
+                .setName('days')
+                .setDescription('Number of days')
+                .setRequired(false)
         ),
-    async execute(interaction, Reminders, client) {
-        const times = interaction.options.getString('time').split(' ')
-        for (let i = 0; i < times.length; i++) {
-            times[i] = parseInt(times[i]);
-            if (isNaN(times[i]))
-                return interaction.reply(`Sorry, time format wasn't recognized.`)
-        }
+    async execute(interaction, Reminders,) {
         let totalTime = 0;
-        totalTime = 1000 * 60 * times[0];
-        if (times.length >= 2) {
-            totalTime += 1000 * 60 * 60 * times[1];
-            if (times.length >= 3) {
-                totalTime += 1000 * 60 * 60 * 24 * times[2];
-            }
-        }
-        console.log(times);
-        console.log(totalTime);
-        const r = await Reminders.upsert({
+        const minutes = interaction.options.getInteger('minutes');
+        const hours = interaction.options.getInteger('hours');
+        const days = interaction.options.getInteger('days');
+        if (minutes) totalTime += oneMinute * minutes;
+        if (hours) totalTime += oneMinute * 60 * hours
+        if (days) totalTime += oneMinute * 60 * 24 * days
+        if (totalTime === 0) totalTime = oneDay;
+
+        const r = await Reminders.create({
             user_id: interaction.user.id,
             channel: interaction.channel.id,
             reminder: interaction.options.getString('string'),
@@ -41,6 +48,7 @@ module.exports = {
         }).then((r) => {
             return r;
         }).catch((error) => console.error(error));
+
         setTimeout(async (user, channel, response, r) => {
             channel.send(`${user}, ${response}`);
             await r.destroy();

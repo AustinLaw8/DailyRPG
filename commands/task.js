@@ -73,7 +73,7 @@ module.exports = {
                                 const hours = Math.floor(expirationTime / 3600);
                                 const minutes = Math.floor((expirationTime / 60) % 60)
                                 const seconds = Math.floor(expirationTime % 60);
-                                embedReply.addField(x.task_name, `Time left: ${hours}:${minutes}:${seconds}`);
+                                embedReply.addField(x.task_name, `Time left: ${hours < 10 ? '0' + hours.toString() : hours}:${minutes < 10 ? '0' + minutes.toString() : minutes}:${seconds < 10 ? '0' + seconds.toString() : seconds}`);
                             }
                         });
                         embedReply.setTimestamp().setFooter({ text: errorMsg });

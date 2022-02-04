@@ -63,6 +63,7 @@ sequelize.sync({ force }).then(async () => {
     //     defaultValue: false,
     //     allowNull: false
     // });
+    // await queryInterface.dropTable('reminders');
     await Reminders.upsert({ user_id: "null", task_name: "null", timeout: new Date().getTime() })
     console.log("Database initialized");
     sequelize.close();
