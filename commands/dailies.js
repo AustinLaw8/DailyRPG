@@ -10,7 +10,7 @@ module.exports = {
         .addSubcommand(subcommand =>
             subcommand
                 .setName('add')
-                .setDescription('Add a new daily!')
+                .setDescription('Add a new daily')
                 .addStringOption(option =>
                     option
                         .setName('daily')
@@ -21,7 +21,7 @@ module.exports = {
         .addSubcommand(subcommand =>
             subcommand
                 .setName('complete')
-                .setDescription('Complete a daily!')
+                .setDescription('Complete a daily')
                 .addStringOption(option =>
                     option
                         .setName('daily')
@@ -32,11 +32,11 @@ module.exports = {
         .addSubcommand(subcommand =>
             subcommand
                 .setName('list')
-                .setDescription('Look at all your dailies!')
+                .setDescription('Look at all your dailies')
         ).addSubcommand(subcommand =>
             subcommand
                 .setName('remove')
-                .setDescription('Remove a daily.')
+                .setDescription('Remove a daily')
                 .addStringOption(option =>
                     option
                         .setName('daily')
@@ -62,7 +62,7 @@ module.exports = {
                             .setTitle(`${interaction.user.tag}'s dailies:`)
                             .setColor(await interaction.user.fetch().then((u) => { return u.accentColor; }));
                         d.forEach((x) => {
-                            embedReply.addField(x.daily_name, x.done ? 'Done :white_check_mark:!' : 'In progress :pencil2: ...');
+                            embedReply.addField(`${x.done ? ':white_check_mark:' : ':white_large_square:'} ${x.daily_name}`, '\u200b');
                         });
                         embedReply.setTimestamp().setFooter({ text: errorMsg })
                         return interaction.reply({

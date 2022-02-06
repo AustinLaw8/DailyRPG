@@ -27,7 +27,9 @@ Now, how do you get the gacha points! By doing ~~(and telling DailyRPG that you 
 
 ## Common Commands
 
-There are two important groups of commands: `task` and `rpg`. Invoking _just_ `/task` or `/rpg` will _not_ do anything; you must invoke them with proper subcommands. A list of all their subcommands can be found at the bottom of this README.
+There are two important groups of commands: `task` and `rpg`. Invoking _just_ `/task` or `/rpg` will _not_ do anything; you must invoke them with proper subcommands. A list of all their subcommands can be found at the bottom of this README. 
+
+There is also a remind command--`/remind <string> <optional: minutes> <optional: hours> <optional: days>`--that pings you in X time about `<string>`.
 
 ## Misc Commands
 
@@ -35,29 +37,32 @@ There are two important groups of commands: `task` and `rpg`. Invoking _just_ `/
 
 `/ping`: classic ping, just to see if the bot is alive
 
-`/remind <string> <time>`: pings you in X time about <reminder>. <time> format must be: Minutes Hours Days; larger time gaps can be dropped if not necessary (i.e. you can choose to not have Hours and Days if you want a reminder in 15 minutes; in that case, the command would look like `/remind string: do this time: 15`)
+`/help <optional: page_number>`: brings up a specified help page (default page 1)
 
 ## TODO Roadmap
 
+Finished
 - [x] Check to make sure user has a character when running task commands
 - [x] Implement permanent stat increasing items
 - [x] Implement rolling
-- [ ] Implement rate up
-- [ ] Add more items to the gacha list
-- [ ] Implement nicely formatted embedded messages
-- [ ] Implement nicely formatted embedded messages especially for /rpg itemlist
 - [x] Implement dailies - make them reset everyday
 - [x] Daily Streaks
-- [ ] Implement equipping stuff
 - [x] Implement fight attempts
-- [ ] Implement limited fight attempts
 - [x] Remind command
+- [x] Change fight algorithm
+- [x] Add a message for auto-used items
+- [x] Remove timeout on tasks, add custom timeouts
+- [x] Implement nicely formatted embedded messages
+
+Unfinished
+- [ ] Implement rate up
+- [ ] Add more items to the gacha list
+- [ ] Implement nicely formatted embedded messages especially for /rpg itemlist
+- [ ] Implement equipping stuff
+- [ ] Implement limited fight attempts
 - [ ] Reminds built into tasks
 - [ ] Help command
 - [ ] Add error catches for everything that could go wrong
-- [x] Change fight algorithm
-- [x] Add a message for auto-used items
-- [ ] Remove timeout on tasks, add custom timeouts
 
 # Important Commands
 
@@ -67,11 +72,11 @@ All task subcommands require a <task_name> parameter.
 
 `/task list <task_name>`: lists your current tasks.
 
-`/task add <task_name>`: add a task to your list of today's tasks.
+`/task add <task> <optional: minutes> <optional: hours> <optional: days>`: adds a task, with a given time limit (default 24 hours)'
 
-`/task complete <task_name>`: mark a task as completed, and get 1 gold in compensation!
+`/task complete <task>`: complete a task, and get one gold in compensation
 
-`/task remove <task_name>`: remove a task from your list (if you don't plan on doing it).
+`/task remove <task>`: remove a task you don't plan on doing
 
 ## RPG Subcommands
 
@@ -87,4 +92,12 @@ Many rpg subcommands have an optional <other> parameter, that lets you run the c
 
 `/rpg fight`: take on the next stage!
 
-`/rpg itemlist`: lists all items currently in the game
+## Dailies Subcommands
+
+`/daily list`: look at all your dailies
+
+`/daily add`: add a new daily
+
+`/daily complete`: complete a daily
+
+`/daily remove`: remove a daily

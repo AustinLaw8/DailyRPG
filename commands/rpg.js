@@ -47,7 +47,7 @@ module.exports = {
         ).addSubcommand(subcommand =>
             subcommand
                 .setName('create')
-                .setDescription('Creates a new character (bound to your discord account)')
+                .setDescription('Create a new character and profile')
         ).addSubcommand(subcommand =>
             subcommand
                 .setName('itemlist')

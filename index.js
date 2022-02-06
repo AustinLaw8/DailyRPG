@@ -130,65 +130,62 @@ client.on('interactionCreate', async interaction => {
     if (!command) return;
 
     try {
-        if (command.data.name === 'item') {
-            switch (interaction.options.getSubcommand()) {
-                case 'add':
-                    const name = interaction.options.getString('name')
-                    const rarity = interaction.options.getString('rarity')
-                    const effect = interaction.options.getString('effect')
-
-                    if (rarities.includes(rarity) || rarity === "XR") {
-                        return interaction.reply('Invalid rarity.')
-                    }
-                    if (!effect.match(parser)) {
-                        return interaction.reply('Invalid effect (format).')
-                    }
-                    await Items.create({ name: name, rarity: rarity, effect: effect })
-                    return interaction.reply('Item added successfully');
-                case 'remove':
-                    return interaction.reply('Not implemented.');
-                case 'give':
-                    const target = interaction.options.getUser('target') ?? interaction.user;
-                    const itemName = interaction.options.getString('name');
-
-                    const user = await characters.get(target.id);
-                    if (!user) return interaction.reply(`That character doesn't exist.`);
-                    if (itemName === 'gold') {
-                        user.gold += 1;
-                        await user.save();
-                        return interaction.reply(`Gold given`);
-                    }
-                    const item = await Items.findOne({ where: { name: { [Op.like]: itemName } } });
-                    if (!item) return interaction.reply(`That item doesn't exist.`);
-
-                    await user.addItem(item);
-                    return interaction.reply(`Gave ${target.tag} a ${itemName}`)
-            }
-        } else if (command.data.name === 'task') {
-            await command.execute(interaction, characters);
-        } else if (command.data.name === 'rpg') {
-            if (interaction.options.getSubcommand() === 'itemlist') {
-                const r = []
-                items.forEach((itemsOfRarity, rarity) => {
-                    itemsOfRarity.forEach((item) => {
-                        const stats = item.effect.split(',')
-                        if (stats[0] === 'P') {
-                            r.push(`${item.name} (${rarity}) - Permanent Effects: STR${stats[1]}, DEX${stats[2]}, INT${stats[3]}, WIZ${stats[4]}`)
-                        } else {
-                            r.push(`${item.name} (${rarity}) - Equipped Effects: STR${stats[0]}, DEX${stats[1]}, INT${stats[2]}, WIZ${stats[3]}`)
-                        }
+        switch (command.data.name) {
+            case 'rpg':
+                if (interaction.options.getSubcommand() === 'itemlist') {
+                    const r = []
+                    items.forEach((itemsOfRarity, rarity) => {
+                        itemsOfRarity.forEach((item) => {
+                            const stats = item.effect.split(',')
+                            if (stats[0] === 'P') {
+                                r.push(`${item.name} (${rarity}) - Permanent Effects: STR${stats[1]}, DEX${stats[2]}, INT${stats[3]}, WIZ${stats[4]}`)
+                            } else {
+                                r.push(`${item.name} (${rarity}) - Equipped Effects: STR${stats[0]}, DEX${stats[1]}, INT${stats[2]}, WIZ${stats[3]}`)
+                            }
+                        })
                     })
+                    return interaction.reply(r.join('\n'));
+                }
+                return command.execute(interaction, characters);
+            case 'task':
+            case 'daily':
+                return command.execute(interaction, characters);
+            case 'remind':
+                return command.execute(interaction, Reminders);
+            case 'item':
+                switch (interaction.options.getSubcommand()) {
+                    case 'add':
+                        const name = interaction.options.getString('name')
+                        const rarity = interaction.options.getString('rarity')
+                        const effect = interaction.options.getString('effect')
 
-                })
-                return interaction.reply(r.join('\n'));
-            }
-            await command.execute(interaction, characters);
-        } else if (command.data.name === 'daily') {
-            await command.execute(interaction, characters);
-        } else if (command.data.name === 'remind') {
-            await command.execute(interaction, Reminders, client);
-        } else {
-            await command.execute(interaction);
+                        if (rarities.includes(rarity) || rarity === "XR") {
+                            return interaction.reply('Invalid rarity.')
+                        }
+                        if (!effect.match(parser)) {
+                            return interaction.reply('Invalid effect (format).')
+                        }
+                        await Items.create({ name: name, rarity: rarity, effect: effect })
+                        return interaction.reply('Item added successfully');
+                    case 'remove':
+                        return interaction.reply('Not implemented.');
+                    case 'give':
+                        const target = interaction.options.getUser('target') ?? interaction.user;
+                        const itemName = interaction.options.getString('name');
+                        const user = await characters.get(target.id);
+                        if (!user) return interaction.reply(`That character doesn't exist.`);
+                        if (itemName === 'gold') {
+                            user.gold += 1;
+                            await user.save();
+                            return interaction.reply(`Gold given`);
+                        }
+                        const item = await Items.findOne({ where: { name: { [Op.like]: itemName } } });
+                        if (!item) return interaction.reply(`That item doesn't exist.`);
+                        await user.addItem(item);
+                        return interaction.reply(`Gave ${target.tag} a ${itemName}`);
+                }
+            default:
+                await command.execute(interaction);
         }
     } catch (error) {
         console.error(error);

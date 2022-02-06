@@ -40,7 +40,7 @@ module.exports = {
         .addSubcommand(subcommand =>
             subcommand
                 .setName('complete')
-                .setDescription('Complete a task!')
+                .setDescription('Complete a task, and get one gold in compensation')
                 .addStringOption(option =>
                     option
                         .setName('task')
@@ -51,7 +51,7 @@ module.exports = {
         .addSubcommand(subcommand =>
             subcommand
                 .setName('list')
-                .setDescription('Look at all your tasks for the day!')
+                .setDescription('Lists your current tasks')
         ).addSubcommand(subcommand =>
             subcommand
                 .setName('remove')

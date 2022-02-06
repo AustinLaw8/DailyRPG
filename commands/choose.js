@@ -5,7 +5,8 @@ module.exports = {
         .setName('choose')
         .setDescription('Chooses one of various given options')
         .addStringOption(option =>
-            option.setName('choices')
+            option
+                .setName('choices')
                 .setDescription('Options to choose from, separated by a space.')
                 .setRequired(true)
         ),

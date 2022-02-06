@@ -30,7 +30,7 @@ module.exports = {
                 .setDescription('Number of days')
                 .setRequired(false)
         ),
-    async execute(interaction, Reminders,) {
+    async execute(interaction, Reminders) {
         let totalTime = 0;
         const minutes = interaction.options.getInteger('minutes');
         const hours = interaction.options.getInteger('hours');
