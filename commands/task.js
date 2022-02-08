@@ -97,10 +97,16 @@ module.exports = {
                             if (expirationTime < 0) {
                                 embedReply.addField(x.task_name, `Timeout :no_entry_sign:! Hurry up and finish your work!`);
                             } else {
-                                const hours = Math.floor(expirationTime / 3600);
-                                const minutes = Math.floor((expirationTime / 60) % 60)
+                                let hours = Math.floor(expirationTime / 3600);
+                                const days = Math.floor(hours / 24);
+                                hours = hours % 24;
+                                const minutes = Math.floor((expirationTime / 60) % 60);
                                 const seconds = Math.floor(expirationTime % 60);
-                                embedReply.addField(x.task_name, `Time left: ${hours < 10 ? '0' + hours.toString() : hours}:${minutes < 10 ? '0' + minutes.toString() : minutes}:${seconds < 10 ? '0' + seconds.toString() : seconds}`);
+                                if (days > 0) {
+                                    embedReply.addField(x.task_name, `Time left: ${days}:${hours < 10 ? '0' + hours.toString() : hours}:${minutes < 10 ? '0' + minutes.toString() : minutes}:${seconds < 10 ? '0' + seconds.toString() : seconds}`);
+                                } else {
+                                    embedReply.addField(x.task_name, `Time left: ${hours < 10 ? '0' + hours.toString() : hours}:${minutes < 10 ? '0' + minutes.toString() : minutes}:${seconds < 10 ? '0' + seconds.toString() : seconds}`);
+                                }
                             }
                         });
                         embedReply.setTimestamp().setFooter({ text: errorMsg });

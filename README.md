@@ -39,7 +39,7 @@ There is also a remind command--`/remind <string> <optional: minutes> <optional:
 
 `/help <optional: page_number>`: brings up a specified help page (default page 1)
 
-## TODO Roadmap
+## v1.0 TODO Roadmap
 
 Finished
 - [x] Check to make sure user has a character when running task commands
@@ -53,16 +53,15 @@ Finished
 - [x] Add a message for auto-used items
 - [x] Remove timeout on tasks, add custom timeouts
 - [x] Implement nicely formatted embedded messages
+- [x] Help command
+- [x] Add error catches for everything that could go wrong
 
 Unfinished
 - [ ] Implement rate up
 - [ ] Add more items to the gacha list
-- [ ] Implement nicely formatted embedded messages especially for /rpg itemlist
 - [ ] Implement equipping stuff
-- [ ] Implement limited fight attempts
 - [ ] Reminds built into tasks
-- [ ] Help command
-- [ ] Add error catches for everything that could go wrong
+- [ ] Include Op.like
 
 # Important Commands
 

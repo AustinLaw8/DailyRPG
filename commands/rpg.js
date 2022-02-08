@@ -91,7 +91,7 @@ module.exports = {
                         .addField('INT :book:', `${user.INT}`, true)
                         .addField('WIZ :brain:', `${user.WIZ}`, true)
                         .addField('\u200B', '\u200B', true)
-                        .addField('-------------------------------------------------','Current Equipment:')
+                        .addField('-------------------------------------------------','Current Equipment')
                         .addField('Weapon :dagger:', `${user.weapon}`, true)
                         .addField('Hat :billed_cap:', `${user.hat}`, true)
                         .addField('Armor :shield:', `${user.armor}`,true)

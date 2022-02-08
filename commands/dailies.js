@@ -50,17 +50,26 @@ module.exports = {
             if (!user) { return interaction.reply('You don\'t have a character! Use `/rpg create` to make one!'); }
             const d = await user.getDailies();
             switch (interaction.options.getSubcommand()) {
-                case 'add': 
+                case 'add':
                     const dailyToAdd = interaction.options.getString('daily');
                     if (await user.addDaily(dailyToAdd))
                         return interaction.reply(`Daily ${dailyToAdd} successfully added!`);
                     else
                         return interaction.reply("Failed to add daily for some reason...");
-                case 'list': 
+                case 'list':
                     if (d.length > 0) {
                         const embedReply = new MessageEmbed()
                             .setTitle(`${interaction.user.tag}'s dailies:`)
                             .setColor(await interaction.user.fetch().then((u) => { return u.accentColor; }));
+                        d.sort((first, second) => {
+                            if (first.daily_name < second.daily_name) {
+                                return -1;
+                            } else if (first.daily_name > second.daily_name) {
+                                return -1;
+                            } else {
+                                return 0;
+                            }
+                        });
                         d.forEach((x) => {
                             embedReply.addField(`${x.done ? ':white_check_mark:' : ':white_large_square:'} ${x.daily_name}`, '\u200b');
                         });
@@ -82,9 +91,9 @@ module.exports = {
                         user.gold += 1
                         let completed = 1;
                         let numDailies = 0;
-                        d.forEach(element => { 
+                        d.forEach(element => {
                             numDailies += 1
-                            if (element.done) completed += 1; 
+                            if (element.done) completed += 1;
                         });
                         if (completed === numDailies && !user.didDailies) {
                             user.gold += 1;
