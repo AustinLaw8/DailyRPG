@@ -10,6 +10,7 @@ Misc Commands
 TODO Roadmap
 -- Important Commands --
 Task Subcommands
+Dailies Subcommands
 RPG Subcommand
 ```
 
@@ -27,7 +28,7 @@ Now, how do you get the gacha points! By doing ~~(and telling DailyRPG that you 
 
 ## Common Commands
 
-There are two important groups of commands: `task` and `rpg`. Invoking _just_ `/task` or `/rpg` will _not_ do anything; you must invoke them with proper subcommands. A list of all their subcommands can be found at the bottom of this README. 
+There are two important groups of commands: `task` and `rpg`. Invoking _just_ `/task` or `/rpg` will _not_ do anything; you must invoke them with proper subcommands. A list of all their subcommands can be found at the bottom of this README. Other task related commands are `/daily` and `/item`.
 
 There is also a remind command--`/remind <string> <optional: minutes> <optional: hours> <optional: days>`--that pings you in X time about `<string>`.
 
@@ -67,36 +68,40 @@ Unfinished
 
 ## Task Subcommands
 
-All task subcommands require a <task_name> parameter.
+All task subcommands require a <task_name> parameter except for `list`.
 
-`/task list <task_name>`: lists your current tasks.
+`/task list`: lists your current tasks.
 
-`/task add <task> <optional: minutes> <optional: hours> <optional: days>`: adds a task, with a given time limit (default 24 hours)'
+`/task add <task_name> <optional: minutes> <optional: hours> <optional: days>`: adds a task, with a given time limit (default 24 hours)'
 
-`/task complete <task>`: complete a task, and get one gold in compensation
+`/task complete <task_name>`: complete a task, and get one gold in compensation
 
-`/task remove <task>`: remove a task you don't plan on doing
-
-## RPG Subcommands
-
-Many rpg subcommands have an optional <other> parameter, that lets you run the command as if you were another user (the other person needs a character too).
-
-`/rpg create`: create a new character and profile. This has to be done before any other commands (if you want them to work).
-
-`/rpg profile <optional: other>`: view your character profile
-
-`/rpg roll <optional: multi> <optional: other>`: roll the gacha! (or roll it 10x)
-
-`/rpg inventory <optional: other>`: view your inventory
-
-`/rpg fight`: take on the next stage!
+`/task remove <task_name>`: remove a task you don't plan on doing
 
 ## Dailies Subcommands
 
+All dailies subcommands require a <daily_name> parameter except for `list`.
+
 `/daily list`: look at all your dailies
 
-`/daily add`: add a new daily
+`/daily add <daily_name>`: add a new daily
 
-`/daily complete`: complete a daily
+`/daily complete <daily_name>`: complete a daily
 
-`/daily remove`: remove a daily
+`/daily remove <daily_name>`: remove a daily
+
+## RPG Commands
+
+`/rpg create`: create a new character and profile. This has to be done before any other commands (if you want them to work).
+
+`/rpg profile <optional: other>`: view your character profile (or someone else's)
+
+`/rpg roll <optional: multi>`: roll the gacha! (or roll it 10x)
+
+`/rpg fight`: take on the next stage!
+
+`/item list`: Lists all currently released items
+
+`/item inventory`: Lists all of the items in your inventory
+
+`/item equip`: Equips a specific item

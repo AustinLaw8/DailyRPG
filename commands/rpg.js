@@ -38,11 +38,6 @@ module.exports = {
                     option
                         .setName('multi')
                         .setDescription('x10 roll'))
-                .addUserOption(option =>
-                    option
-                        .setName('other')
-                        .setDescription('or roll for someone else? (y u waste ur gacha like that)')
-                )
         )
         .addSubcommand(subcommand =>
             subcommand
