@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const oneMinute = 1000 * 60;
 const oneDay = oneMinute * 60 * 24;
-
+const MAX_INT = 2**31 - 1;
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('remind')
@@ -39,7 +39,10 @@ module.exports = {
         if (hours) totalTime += oneMinute * 60 * hours
         if (days) totalTime += oneMinute * 60 * 24 * days
         if (totalTime === 0) totalTime = oneDay;
-
+        if (totalTime > MAX_INT) {
+            return interaction.reply(`Your intended delay is too long! (Max delay is about ~24.8 days) (This is a known issue that might be fixed in later versions).`);
+        }
+        
         const r = await Reminders.create({
             user_id: interaction.user.id,
             channel: interaction.channel.id,

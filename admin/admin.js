@@ -2,8 +2,8 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('item')
-		.setDescription('Accesses items database')
+		.setName('admin')
+		.setDescription('admin commands database')
         .addSubcommand(subcommand =>
             subcommand
                 .setName('add')

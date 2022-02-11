@@ -102,10 +102,12 @@ module.exports = {
                                 hours = hours % 24;
                                 const minutes = Math.floor((expirationTime / 60) % 60);
                                 const seconds = Math.floor(expirationTime % 60);
-                                if (days > 0) {
-                                    embedReply.addField(x.task_name, `Time left: ${days}:${hours < 10 ? '0' + hours.toString() : hours}:${minutes < 10 ? '0' + minutes.toString() : minutes}:${seconds < 10 ? '0' + seconds.toString() : seconds}`);
+                                if (days === 0 && hours === 0 && minutes === 0) {
+                                    embedReply.addField(x.task_name, `Time is running out :bangbang: ${seconds} seconds left!`)
+                                } else if (days > 0) {
+                                    embedReply.addField(x.task_name, `Time left: ${days}:${hours < 10 ? '0' + hours.toString() : hours}:${minutes < 10 ? '0' + minutes.toString() : minutes}`);
                                 } else {
-                                    embedReply.addField(x.task_name, `Time left: ${hours < 10 ? '0' + hours.toString() : hours}:${minutes < 10 ? '0' + minutes.toString() : minutes}:${seconds < 10 ? '0' + seconds.toString() : seconds}`);
+                                    embedReply.addField(x.task_name, `Time left: ${hours < 10 ? '0' + hours.toString() : hours}:${minutes < 10 ? '0' + minutes.toString() : minutes}`);
                                 }
                             }
                         });

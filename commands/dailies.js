@@ -33,7 +33,8 @@ module.exports = {
             subcommand
                 .setName('list')
                 .setDescription('Look at all your dailies')
-        ).addSubcommand(subcommand =>
+        )
+        .addSubcommand(subcommand =>
             subcommand
                 .setName('remove')
                 .setDescription('Remove a daily')

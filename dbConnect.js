@@ -70,15 +70,7 @@ Reflect.defineProperty(Characters.prototype, 'addItem', {
 Reflect.defineProperty(Characters.prototype, 'addTask', {
     /* eslint-disable-next-line func-name-matching */
     value: async function addTask(task, timeout) {
-        const userTask = await Tasks.findOne({
-            where: { user_id: this.user_id, task_name: task },
-        });
-
-        if (userTask) {
-            return null;
-        } else {
-            return Tasks.create({ user_id: this.user_id, task_name: task, timeout: new Date().getTime() + timeout })
-        }
+        return await Tasks.upsert({ user_id: this.user_id, task_name: task, timeout: new Date().getTime() + timeout })
     }
 })
 

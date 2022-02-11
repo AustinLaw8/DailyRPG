@@ -132,27 +132,13 @@ client.on('interactionCreate', async interaction => {
     try {
         switch (command.data.name) {
             case 'rpg':
-                if (interaction.options.getSubcommand() === 'itemlist') {
-                    const r = []
-                    items.forEach((itemsOfRarity, rarity) => {
-                        itemsOfRarity.forEach((item) => {
-                            const stats = item.effect.split(',')
-                            if (stats[0] === 'P') {
-                                r.push(`${item.name} (${rarity}) - Permanent Effects: STR${stats[1]}, DEX${stats[2]}, INT${stats[3]}, WIZ${stats[4]}`)
-                            } else {
-                                r.push(`${item.name} (${rarity}) - Equipped Effects: STR${stats[0]}, DEX${stats[1]}, INT${stats[2]}, WIZ${stats[3]}`)
-                            }
-                        })
-                    })
-                    return interaction.reply(r.join('\n'));
-                }
-                return command.execute(interaction, characters);
             case 'task':
             case 'daily':
+            case 'item':
                 return command.execute(interaction, characters);
             case 'remind':
                 return command.execute(interaction, Reminders);
-            case 'item':
+            case 'admin':
                 switch (interaction.options.getSubcommand()) {
                     case 'add':
                         const name = interaction.options.getString('name')
