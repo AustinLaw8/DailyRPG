@@ -15,7 +15,25 @@ const addItemFromRoll = (user, rollResult, rollReply) => {
         rollReply.addField(`${rollResult.name}`, '\u200b', true);
     }
 }
+const getStatsFromItem = (item) => {
+    try {
+        const stats = item.effect.split(',');
+        return [parseInt(stats[1], 10), parseInt(stats[2], 10), parseInt(stats[3], 10), parseInt(stats[4], 10)]
+    } catch (error) {
+        console.log(error);
+        return [0, 0, 0, 0]
+    }
 
+}
+const statToString = (stat) => {
+    if (stat === 0) {
+        return '';
+    } else if (stat > 0) {
+        return `(+${stat})`;
+    } else {
+        return `(${stat})`
+    }
+}
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('rpg')
@@ -49,7 +67,7 @@ module.exports = {
                 .setName('fight')
                 .setDescription('Fight!')
         ),
-    async execute(interaction, characters) {
+    async execute(interaction, characters, itemsByName) {
         try {
             if (interaction.options.getSubcommand() === 'create') {
                 // Create a character, if one does not exist
@@ -67,6 +85,12 @@ module.exports = {
             const target = interaction.options.getUser('other') ?? interaction.user;
             const user = characters.get(target.id);
             if (!user) { return interaction.reply(`${target.tag} doesn't have a character! Use \`/rpg create\` to make one!`); }
+
+            let statsBonuses = [0, 0, 0, 0];
+            getStatsFromItem(itemsByName.get(user.weapon)).forEach((val, i) => { statsBonuses[i] += val; });
+            getStatsFromItem(itemsByName.get(user.hat)).forEach((val, i) => { statsBonuses[i] += val; });
+            getStatsFromItem(itemsByName.get(user.armor)).forEach((val, i) => { statsBonuses[i] += val; });
+
             switch (interaction.options.getSubcommand()) {
                 case 'profile':
                     const embedReply = new MessageEmbed()
@@ -76,11 +100,11 @@ module.exports = {
                         .addField('Streak :fire:', `${user.streak}`, true)
                         .addField('Stage: :european_castle:', `${user.stage}`, true)
                         .addField('-------------------------------------------------', 'Character Stats')
-                        .addField('STR :muscle:', `${user.STR}`, true)
-                        .addField('DEX :bow_and_arrow:', `${user.DEX}`, true)
+                        .addField('STR :muscle:', `${user.STR} ${statToString(statsBonuses[0])}`, true)
+                        .addField('DEX :bow_and_arrow:', `${user.DEX} ${statToString(statsBonuses[1])}`, true)
                         .addField('\u200B', '\u200B', true)
-                        .addField('INT :book:', `${user.INT}`, true)
-                        .addField('WIZ :brain:', `${user.WIZ}`, true)
+                        .addField('INT :book:', `${user.INT} ${statToString(statsBonuses[2])}`, true)
+                        .addField('WIZ :brain:', `${user.WIZ} ${statToString(statsBonuses[3])}`, true)
                         .addField('\u200B', '\u200B', true)
                         .addField('-------------------------------------------------', 'Current Equipment')
                         .addField('Weapon :dagger:', `${user.weapon}`, true)
@@ -121,7 +145,7 @@ module.exports = {
                     let minStatsBase = getMinStatsBase(user.stage)
                     const rPick = Math.floor(Math.random() * 4);
                     const opponent = enemies[rPick];
-                    const userStats = [user.STR, user.DEX, user.INT, user.WIZ];
+                    const userStats = [user.STR + statsBonuses[0], user.DEX + statsBonuses[1], user.INT + statsBonuses[2], user.WIZ + statsBonuses[3]];
                     let need = Math.floor(minStatsBase * 4.25);
                     let extraStat = 0;
                     if (Math.max.apply(null, userStats) > minStatsBase * 3) {

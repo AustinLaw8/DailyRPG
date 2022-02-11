@@ -100,8 +100,10 @@ All dailies subcommands require a <daily_name> parameter except for `list`.
 
 `/rpg fight`: take on the next stage!
 
-`/item list`: Lists all currently released items
+`/item list`: lists all currently released items
 
-`/item inventory`: Lists all of the items in your inventory
+`/item inventory`: lists all of the items in your inventory
 
-`/item equip`: Equips a specific item
+`/item equip`: equips a specific item
+
+`/item unequip <required: slot>`: unequips an item from a specific slot
