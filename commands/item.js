@@ -50,10 +50,9 @@ module.exports = {
             const user = characters.get(interaction.user.id);
             if (!user) { return interaction.reply(`You don't have a character! Use \`/rpg create\` to make one!`); }
             const userInv = await user.getItems();
-
             switch (interaction.options.getSubcommand()) {
                 case 'equip':
-                    const item = userInv.get(interaction.options.getString('item'))
+                    const item = userInv.find((element) => element.item.name == interaction.options.getString('item')).item;
                     if (!item)
                         return interaction.reply(`${interaction.options.getString('item')} not found (either spelled wrong, or not in your inventory!)`)
                     if (await user.equip(item))
