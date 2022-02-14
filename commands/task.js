@@ -5,6 +5,7 @@ const oneDay = 1000 * 60 * 60 * 24;
 const oneWeek = oneDay * 7;
 const errorMsg = 'Problems? Message @Eagle [Austin] with the command you ran!';
 const divider = '-------------------------------------------------';
+const DEFAULT_ERR = 'If you see this, something went wrong...';
 
 const indexMappings = new Map([
     [0, ':one:'],
@@ -82,9 +83,13 @@ module.exports = {
                 .setDescription('Complete a task, and get one gold in compensation')
                 .addStringOption(option =>
                     option
-                        .setName('task')
-                        .setDescription('The task you completed!')
-                        .setRequired(true)
+                        .setName('name')
+                        .setDescription('The name of the task you completed!')
+                )
+                .addIntegerOption(option =>
+                    option
+                        .setName('number')
+                        .setDescription('The number of the task you completed (Be careful; this can change whenever you add a new task)!')
                 )
         )
         .addSubcommand(subcommand =>
@@ -97,9 +102,13 @@ module.exports = {
                 .setDescription('Remove a task you don\'t plan on doing.')
                 .addStringOption(option =>
                     option
-                        .setName('task')
-                        .setDescription('The task you want to remove')
-                        .setRequired(true)
+                        .setName('name')
+                        .setDescription('The name of the task you completed!')
+                )
+                .addIntegerOption(option =>
+                    option
+                        .setName('number')
+                        .setDescription('The number of the task you completed (Be careful; this can change whenever you add a new task)!')
                 )
         ),
     async execute(interaction, characters) {
@@ -137,8 +146,8 @@ module.exports = {
                             const timeoutT = new Date(x.timeout);
                             const expirationTime = (timeoutT.getTime() - date.getTime()) / 1000;
                             let task = `${indexMappings.get(index)} ${x.task_name}\n`;
-                            let due = 'If you see this, something went wrong...';
-                            let time = 'If you see this, something went wrong...';
+                            let due = DEFAULT_ERR;
+                            let time = DEFAULT_ERR;
                             if (expirationTime < 0) {
                                 due = '***Late!***';
                                 time = '_Timeout!_';
@@ -175,21 +184,38 @@ module.exports = {
                         return interaction.reply('You don\'t have any tasks for today!');
                     }
                 case 'remove':
-                    if (await user.removeTask(interaction.options.getString('task'))) {
-                        return interaction.reply(`Task '${interaction.options.getString('task')}' deleted!`);
-                    } else {
-                        return interaction.reply({ content: "Failed to remove task for some reason... (name probably wasn't found)", ephemeral: true });
-                    }
                 case 'complete':
-                    switch (await user.removeTask(interaction.options.getString('task'))) {
-                        case -1:
-                            return interaction.reply({ content: "Failed to mark task as completed for some reason... (name probably wasn't found)", ephemeral: true });
-                        case 0:
-                            user.gold += 1;
-                            await user.save();
-                            return interaction.reply(`Task '${interaction.options.getString('task')}' completed! +1 Gold`);
-                        case 1:
-                            return interaction.reply(`Task '${interaction.options.getString('task')}' completed! No gold rewarded, since this task timed out!`);
+                    const index = interaction.options.getInteger('number') ?? -1;
+                    let target = '';
+                    if (interaction.options.getString('name')) {
+                        target = interaction.options.getString('name');
+                    } else if (index !== -1) {
+                        if (index - 1 > curTasks.length) {
+                            return interaction.reply({ content: `That task number doesn't exist!`, ephemeral: true });
+                        }
+                        target = index[task_number-1].task_name;
+                    } else {
+                        return interaction.reply({ content: `You must give either a task name or number!`, ephemeral: true });
+                    }
+                    if (!target) { return interaction.reply({ content: DEFAULT_ERR, ephemeral: true }); }
+                    
+                    if (interaction.options.getSubcommand() === 'remove') {
+                        if (await user.removeTask(target) !== -1) {
+                            return interaction.reply(`Task '${target}' deleted!`);
+                        } else {
+                            return interaction.reply({ content: "Failed to remove task for some reason... (name probably wasn't found)", ephemeral: true });
+                        }
+                    } else {
+                        switch (await user.removeTask(target)) {
+                            case -1:
+                                return interaction.reply({ content: "Failed to mark task as completed for some reason... (name probably wasn't found)", ephemeral: true });
+                            case 0:
+                                user.gold += 1;
+                                await user.save();
+                                return interaction.reply(`Task '${target}' completed! +1 Gold`);
+                            case 1:
+                                return interaction.reply(`Task '${target}' completed! No gold rewarded, since this task timed out!`);
+                        }
                     }
             }
         } catch (error) {
