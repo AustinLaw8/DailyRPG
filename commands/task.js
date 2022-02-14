@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js')
 const oneMinute = 1000 * 60;
 const oneDay = 1000 * 60 * 60 * 24;
+const oneWeek = oneDay * 7;
 const errorMsg = 'Problems? Message @Eagle [Austin] with the command you ran!';
 const divider = '-------------------------------------------------';
 
@@ -28,6 +29,20 @@ const dayMappings = new Map([
     [6, 'Saturday'],
 ])
 
+const monthMappings = new Map([
+    [0, 'January'],
+    [1, 'February'],
+    [2, 'March'],
+    [3, 'April'],
+    [4, 'May'],
+    [5, 'June'],
+    [6, 'July'],
+    [7, 'August'],
+    [8, 'September'],
+    [9, 'October'],
+    [10, 'November'],
+    [11, 'December'],
+])
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('task')
@@ -121,26 +136,30 @@ module.exports = {
                         curTasks.forEach((x, index) => {
                             const timeoutT = new Date(x.timeout);
                             const expirationTime = (timeoutT.getTime() - date.getTime()) / 1000;
-                            const timeoutS = timeoutT.toString();
-                            let task = '';
-                            // TODO: Fix up date formatting
-                            let due = `${timeoutS.substring(0, timeoutS.indexOf(':',timeoutS.indexOf(':')+1))}`;
-                            let time = 'Timeout!'
+                            let task = `${indexMappings.get(index)} ${x.task_name}\n`;
+                            let due = 'If you see this, something went wrong...';
+                            let time = 'If you see this, something went wrong...';
                             if (expirationTime < 0) {
-                                task = `${mappings.get(index)} ${x.task_name}\n`
+                                due = '***Late!***';
+                                time = '_Timeout!_';
                             } else {
+                                if (expirationTime > oneWeek / 1000) {
+                                    due = `${dayMappings.get(timeoutT.getDay())}, ${monthMappings.get(timeoutT.getMonth())} ${timeoutT.getDate()}`;
+                                } else if (date.getDate() === timeoutT.getDate()) {
+                                        due = `***Today*** at ${timeoutT.getHours()}:${timeoutT.getMinutes()}`
+                                } else {
+                                    due = `This ***${dayMappings.get(timeoutT.getDay())}*** at ${timeoutT.getHours()}:${timeoutT.getMinutes()}`;
+                                }
                                 let hours = Math.floor(expirationTime / 3600);
                                 const days = Math.floor(hours / 24);
                                 hours = hours % 24;
                                 const minutes = Math.floor((expirationTime / 60) % 60);
                                 const seconds = Math.floor(expirationTime % 60);
                                 if (days === 0 && hours === 0 && minutes === 0) {
-                                    task = `${mappings.get(index)} ${x.task_name}\n`
+                                    time = `_${seconds} seconds!_`; 
                                 } else if (days > 0) {
-                                    task = `**${mappings.get(index)} ${x.task_name}\n**`
                                     time = `_${days}d ${hours < 10 ? '0' + hours.toString() : hours}h ${minutes < 10 ? '0' + minutes.toString() : minutes}m_\n`
                                 } else {
-                                    task = `${mappings.get(index)} ${x.task_name}\n`
                                     time = `_${hours < 10 ? '0' + hours.toString() : hours}h ${minutes < 10 ? '0' + minutes.toString() : minutes}m_\n`
                                 }
                             }
