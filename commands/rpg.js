@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js')
 const enemies = ["Slimy Slime", "Devilish Rat", "Impertinent Owl", "Wicked Wolf"]
 const errorMsg = 'Problems? Message @Eagle [Austin] with the command you ran!';
+const divider = '-------------------------------------------------';
 const multiplier = 1.25;
 const getMinStatsBase = (stage) => {
     return Math.floor(stage ** (5 / 4));
@@ -99,14 +100,14 @@ module.exports = {
                         .addField('Gold :coin:', `${user.gold}`, true)
                         .addField('Streak :fire:', `${user.streak}`, true)
                         .addField('Stage: :european_castle:', `${user.stage}`, true)
-                        .addField('-------------------------------------------------', 'Character Stats')
+                        .addField(divider, 'Character Stats')
                         .addField('STR :muscle:', `${user.STR} ${statToString(statsBonuses[0])}`, true)
                         .addField('DEX :bow_and_arrow:', `${user.DEX} ${statToString(statsBonuses[1])}`, true)
                         .addField('\u200B', '\u200B', true)
                         .addField('INT :book:', `${user.INT} ${statToString(statsBonuses[2])}`, true)
                         .addField('WIZ :brain:', `${user.WIZ} ${statToString(statsBonuses[3])}`, true)
                         .addField('\u200B', '\u200B', true)
-                        .addField('-------------------------------------------------', 'Current Equipment')
+                        .addField(divider, 'Current Equipment')
                         .addField('Weapon :dagger:', `${user.weapon}`, true)
                         .addField('Hat :billed_cap:', `${user.hat}`, true)
                         .addField('Armor :shield:', `${user.armor}`, true)

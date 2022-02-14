@@ -54,9 +54,9 @@ module.exports = {
                 case 'add':
                     const dailyToAdd = interaction.options.getString('daily');
                     if (await user.addDaily(dailyToAdd))
-                        return interaction.reply(`Daily ${dailyToAdd} successfully added!`);
+                        return interaction.reply(`Daily '${dailyToAdd}' successfully added!`);
                     else
-                        return interaction.reply("Failed to add daily for some reason...");
+                        return interaction.reply({ content: "Failed to add daily for some reason...", ephemeral: true });
                 case 'list':
                     if (d.length > 0) {
                         const embedReply = new MessageEmbed()
@@ -83,9 +83,9 @@ module.exports = {
                     }
                 case 'remove':
                     if (await user.removeDaily(interaction.options.getString('daily'))) {
-                        return interaction.reply(`Daily ${interaction.options.getString('daily')} deleted!`);
+                        return interaction.reply(`Daily '${interaction.options.getString('daily')}' deleted!`);
                     } else {
-                        return interaction.reply("Failed to remove daily for some reason... (name probably wasn't found)");
+                        return interaction.reply({ content: "Failed to remove daily for some reason... (name probably wasn't found)", ephemeral: true });
                     }
                 case 'complete':
                     if (await user.completeDaily(interaction.options.getString('daily'))) {
@@ -101,13 +101,13 @@ module.exports = {
                             user.streak += 1;
                             user.didDailies = true;
                             await user.save();
-                            await interaction.reply(`Daily ${interaction.options.getString('daily')} completed! +1 Gold`);
+                            await interaction.reply(`Daily '${interaction.options.getString('daily')}' completed! +1 Gold`);
                             return interaction.followUp(`Congrats, you finished all your dailies; streak extended! Have 1 more gold!`);
                         }
                         await user.save();
-                        return interaction.reply(`Daily ${interaction.options.getString('daily')} completed! +1 Gold`);
+                        return interaction.reply(`Daily '${interaction.options.getString('daily')}' completed! +1 Gold`);
                     } else {
-                        return interaction.reply("Failed to mark daily as completed for some reason... (name probably wasn't found)");
+                        return interaction.reply({ content: "Failed to mark daily as completed for some reason... (name probably wasn't found)", ephemeral: true });
                     }
             }
         } catch (error) {

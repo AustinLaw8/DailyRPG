@@ -110,7 +110,6 @@ client.once("ready", async () => {
     r.forEach((b) => {
       if (b.user_id !== "null") {
         const sendTime = b.timeout.getTime() - curTime;
-        console.log(`${b.reminder}, ${new Date(b.timeout).toString()}`);
         setTimeout(
           async (b) => {
             const u = await client.users.fetch(b.user_id);
@@ -127,7 +126,7 @@ client.once("ready", async () => {
 
   const now = new Date();
   now.setUTCHours(now.getUTCHours() - 8);
-  console.log(now);
+  console.log(`Current Time: ${now}`);
   const d = new Date(now);
   d.setUTCDate(d.getUTCDate() + 1);
   d.setUTCHours(0);
