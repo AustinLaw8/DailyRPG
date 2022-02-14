@@ -3,6 +3,30 @@ const { MessageEmbed } = require('discord.js')
 const oneMinute = 1000 * 60;
 const oneDay = 1000 * 60 * 60 * 24;
 const errorMsg = 'Problems? Message @Eagle [Austin] with the command you ran!';
+const divider = '-------------------------------------------------';
+
+const indexMappings = new Map([
+    [0, ':one:'],
+    [1, ':two:'],
+    [2, ':three:'],
+    [3, ':four:'],
+    [4, ':five:'],
+    [5, ':six:'],
+    [6, ':seven:'],
+    [7, ':eight:'],
+    [8, ':nine:'],
+    [9, ':ten:'],
+]);
+
+const dayMappings = new Map([
+    [0, 'Sunday'],
+    [1, 'Monday'],
+    [2, 'Tuesday'],
+    [3, 'Wednesday'],
+    [4, 'Thursday'],
+    [5, 'Friday'],
+    [6, 'Saturday'],
+])
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -72,6 +96,9 @@ module.exports = {
             switch (interaction.options.getSubcommand()) {
                 case 'add':
                     const taskToAdd = interaction.options.getString('task');
+                    if (taskToAdd.length > 256) {
+                        return interaction.reply('Task name is too long! (Max 255 characters)')
+                    }
                     let totalTime = 0;
                     const minutes = interaction.options.getInteger('minutes');
                     const hours = interaction.options.getInteger('hours');
@@ -82,20 +109,25 @@ module.exports = {
                     if (totalTime === 0) totalTime = oneDay;
                     const taskAdded = await user.addTask(taskToAdd, totalTime);
                     if (taskAdded) {
-                        return interaction.reply(`Task ${taskToAdd} successfully added!`);
+                        return interaction.reply(`Task '${taskToAdd}' successfully added!`);
                     } else {
-                        return interaction.reply("Failed to add task for some reason...");
+                        return interaction.reply({ content: "Failed to add task for some reason...", ephemeral: true });
                     }
                 case 'list':
                     if (curTasks.length > 0) {
                         const embedReply = new MessageEmbed()
                             .setTitle(`${interaction.user.tag}'s todo list:`)
                             .setColor(await interaction.user.fetch().then((u) => { return u.accentColor; }));
-                        curTasks.forEach((x) => {
+                        curTasks.forEach((x, index) => {
                             const timeoutT = new Date(x.timeout);
                             const expirationTime = (timeoutT.getTime() - date.getTime()) / 1000;
+                            const timeoutS = timeoutT.toString();
+                            let task = '';
+                            // TODO: Fix up date formatting
+                            let due = `${timeoutS.substring(0, timeoutS.indexOf(':',timeoutS.indexOf(':')+1))}`;
+                            let time = 'Timeout!'
                             if (expirationTime < 0) {
-                                embedReply.addField(x.task_name, `Timeout :no_entry_sign:! Hurry up and finish your work!`);
+                                task = `${mappings.get(index)} ${x.task_name}\n`
                             } else {
                                 let hours = Math.floor(expirationTime / 3600);
                                 const days = Math.floor(hours / 24);
@@ -103,13 +135,18 @@ module.exports = {
                                 const minutes = Math.floor((expirationTime / 60) % 60);
                                 const seconds = Math.floor(expirationTime % 60);
                                 if (days === 0 && hours === 0 && minutes === 0) {
-                                    embedReply.addField(x.task_name, `Time is running out :bangbang: ${seconds} seconds left!`)
+                                    task = `${mappings.get(index)} ${x.task_name}\n`
                                 } else if (days > 0) {
-                                    embedReply.addField(x.task_name, `Time left: ${days}:${hours < 10 ? '0' + hours.toString() : hours}:${minutes < 10 ? '0' + minutes.toString() : minutes}`);
+                                    task = `**${mappings.get(index)} ${x.task_name}\n**`
+                                    time = `_${days}d ${hours < 10 ? '0' + hours.toString() : hours}h ${minutes < 10 ? '0' + minutes.toString() : minutes}m_\n`
                                 } else {
-                                    embedReply.addField(x.task_name, `Time left: ${hours < 10 ? '0' + hours.toString() : hours}:${minutes < 10 ? '0' + minutes.toString() : minutes}`);
+                                    task = `${mappings.get(index)} ${x.task_name}\n`
+                                    time = `_${hours < 10 ? '0' + hours.toString() : hours}h ${minutes < 10 ? '0' + minutes.toString() : minutes}m_\n`
                                 }
                             }
+                            embedReply.addField(task, '\u200b',true)
+                            embedReply.addField(due, time, true);
+                            embedReply.addField('\u200b','\u200b',true)
                         });
                         embedReply.setTimestamp().setFooter({ text: errorMsg });
                         return interaction.reply({
@@ -120,17 +157,20 @@ module.exports = {
                     }
                 case 'remove':
                     if (await user.removeTask(interaction.options.getString('task'))) {
-                        return interaction.reply(`Task ${interaction.options.getString('task')} deleted!`);
+                        return interaction.reply(`Task '${interaction.options.getString('task')}' deleted!`);
                     } else {
-                        return interaction.reply("Failed to remove task for some reason... (name probably wasn't found)");
+                        return interaction.reply({ content: "Failed to remove task for some reason... (name probably wasn't found)", ephemeral: true });
                     }
                 case 'complete':
-                    if (await user.removeTask(interaction.options.getString('task'))) {
-                        user.gold += 1;
-                        await user.save();
-                        return interaction.reply(`Task ${interaction.options.getString('task')} completed! +1 Gold`);
-                    } else {
-                        return interaction.reply("Failed to mark task as completed for some reason... (name probably wasn't found)");
+                    switch (await user.removeTask(interaction.options.getString('task'))) {
+                        case -1:
+                            return interaction.reply({ content: "Failed to mark task as completed for some reason... (name probably wasn't found)", ephemeral: true });
+                        case 0:
+                            user.gold += 1;
+                            await user.save();
+                            return interaction.reply(`Task '${interaction.options.getString('task')}' completed! +1 Gold`);
+                        case 1:
+                            return interaction.reply(`Task '${interaction.options.getString('task')}' completed! No gold rewarded, since this task timed out!`);
                     }
             }
         } catch (error) {
