@@ -193,7 +193,7 @@ module.exports = {
                         if (index - 1 > curTasks.length) {
                             return interaction.reply({ content: `That task number doesn't exist!`, ephemeral: true });
                         }
-                        target = index[index-1].task_name;
+                        target = curTasks[index-1].task_name;
                     } else {
                         return interaction.reply({ content: `You must give either a task name or number!`, ephemeral: true });
                     }
