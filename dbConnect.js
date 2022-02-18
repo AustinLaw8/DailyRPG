@@ -177,9 +177,8 @@ Reflect.defineProperty(Characters.prototype, "removeTask", {
         });
 
         if (target) {
-            const status = target.timeout.getTime() - new Date().getTime() > 0 ? 0 : 1;
             await target.destroy();
-            return status;
+            return 0;
         } else {
             return -1;
         }

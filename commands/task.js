@@ -213,8 +213,8 @@ module.exports = {
                                 user.gold += 1;
                                 await user.save();
                                 return interaction.reply(`Task '${target}' completed! +1 Gold`);
-                            case 1:
-                                return interaction.reply(`Task '${target}' completed! No gold rewarded, since this task timed out!`);
+                            // case 1:
+                            //     return interaction.reply(`Task '${target}' completed! No gold rewarded, since this task timed out!`);
                         }
                     }
             }

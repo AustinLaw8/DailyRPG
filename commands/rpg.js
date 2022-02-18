@@ -7,13 +7,15 @@ const multiplier = 1.25;
 const getMinStatsBase = (stage) => {
     return Math.floor(stage ** (5 / 4));
 }
-const addItemFromRoll = (user, rollResult, rollReply) => {
-    user.addItem(rollResult);
+const addItemFromRoll = async (user, rollResult, rollReply) => {
+    console.log(rollResult.name)
+    await user.addItem(rollResult);
     user.gold -= 1;
     if (rollResult.effect[0] === 'P') {
-        rollReply.addField(`${rollResult.name}`, 'Used automatically!', true);
+        const stats = getStatsFromItem(rollResult);
+        rollReply.addField(`${rollResult.name}`, `Used automatically! STR+${stats[0]}, DEX+${stats[1]},\nINT+${stats[2]}, WIZ+${stats[3]}`, true);
     } else {
-        rollReply.addField(`${rollResult.name}`, '\u200b', true);
+        rollReply.addField(`${rollResult.name}`, `Added to inventory!`, true);
     }
 }
 const getStatsFromItem = (item) => {
@@ -127,15 +129,16 @@ module.exports = {
                         if (user.gold < 10) {
                             return interaction.reply('You don\'t have enough gold!');
                         } else {
-                            characters.roll(10).forEach((rollResult) => {
-                                addItemFromRoll(user, rollResult, rollReply);
+                            characters.roll(9).forEach( async (rollResult) => {
+                                await addItemFromRoll(user, rollResult, rollReply);
                             });
+                            await addItemFromRoll(user, characters.roll(1, { N: 0.75, R: 0.90, SR: 1 /*0, 0, 0*/ })[0], rollReply);
                         }
                     } else {
                         if (user.gold < 1) {
                             return interaction.reply('You don\'t have enough gold!');
                         } else {
-                            addItemFromRoll(user, characters.roll()[0], rollReply);
+                            await addItemFromRoll(user, characters.roll()[0], rollReply);
                         }
                     }
                     await user.save();

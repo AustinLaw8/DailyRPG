@@ -15,6 +15,8 @@ module.exports = {
     ),
     async execute(interaction) {
         const page = interaction.options.getInteger('page_number') ?? 1;
+        let message = null;
+    
         const helpPage1 = new MessageEmbed()
             .setTitle(`DailyRPG Help Page 1`)
             .setURL('https://github.com/AustinLaw8/DailyRPG')
@@ -31,6 +33,7 @@ module.exports = {
             .addField('/daily complete <daily>', 'Complete a daily')
             .addField('/daily remove <daily>', 'Remove a daily')
             .setFooter({ text: errorMsg });
+            
         const helpPage2 = new MessageEmbed()
             .setTitle(`DailyRPG Help Page 2`)
             .setURL('https://github.com/AustinLaw8/DailyRPG')
@@ -52,14 +55,18 @@ module.exports = {
 
         switch (page) {
             case 1:
-                return interaction.reply({
+                message = await interaction.reply({
                     embeds: [helpPage1],
+                    fetchReply: true,
                 });
+                break;
             case 2:
             default:
-                return interaction.reply({
+                message = await interaction.reply({
                     embeds: [helpPage2],
+                    fetchReply: true,
                 });
+                break;
         }
     },
 };
