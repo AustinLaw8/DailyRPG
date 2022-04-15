@@ -29,13 +29,21 @@ const rest = new REST({ version: '9' }).setToken(process.env.token);
         console.log('Started refreshing application (/) commands.');
         const all = commands.concat(adminCommands);
         await rest.put(
-            Routes.applicationGuildCommands(process.env.clientId, process.env.testGuildId),
-            { body: all },
+            Routes.applicationCommands(process.env.clientId),
+            { body: commands },
         );
-        await rest.put(
-        	Routes.applicationGuildCommands(process.env.clientId, process.env.SERVER_1),
-        	{ body: commands },
-        );
+        // await rest.put(
+        //     Routes.applicationGuildCommands(process.env.clientId, process.env.testGuildId),
+        //     { body: all },
+        // );
+        // await rest.put(
+        // 	Routes.applicationGuildCommands(process.env.clientId, process.env.SERVER_1),
+        // 	{ body: all },
+        // );
+        // await rest.put(
+        // 	Routes.applicationGuildCommands(process.env.clientId, process.env.SERVER_2),
+        // 	{ body: all },
+        // ); 
         console.log('Successfully reloaded application (/) commands.');
     } catch (error) {
         console.error(error);

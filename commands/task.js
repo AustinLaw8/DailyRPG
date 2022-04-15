@@ -44,6 +44,10 @@ const monthMappings = new Map([
     [10, 'November'],
     [11, 'December'],
 ])
+
+const formatNumber = (n) => {
+    return n < 10 ? '0' + n.toString() : n
+}
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('task')
@@ -155,9 +159,9 @@ module.exports = {
                                 if (expirationTime > oneWeek / 1000) {
                                     due = `${dayMappings.get(timeoutT.getDay())}, ${monthMappings.get(timeoutT.getMonth())} ${timeoutT.getDate()}`;
                                 } else if (date.getDate() === timeoutT.getDate()) {
-                                        due = `***Today*** at ${timeoutT.getHours()}:${timeoutT.getMinutes()}`
+                                        due = `***Today*** at ${formatNumber(timeoutT.getHours())}:${formatNumber(timeoutT.getMinutes())}`
                                 } else {
-                                    due = `This ***${dayMappings.get(timeoutT.getDay())}*** at ${timeoutT.getHours()}:${timeoutT.getMinutes()}`;
+                                    due = `This ***${dayMappings.get(timeoutT.getDay())}*** at ${formatNumber(timeoutT.getHours())}:${formatNumber(timeoutT.getMinutes())}`;
                                 }
                                 let hours = Math.floor(expirationTime / 3600);
                                 const days = Math.floor(hours / 24);
@@ -167,9 +171,9 @@ module.exports = {
                                 if (days === 0 && hours === 0 && minutes === 0) {
                                     time = `_${seconds} seconds!_`; 
                                 } else if (days > 0) {
-                                    time = `_${days}d ${hours < 10 ? '0' + hours.toString() : hours}h ${minutes < 10 ? '0' + minutes.toString() : minutes}m_\n`
+                                    time = `_${days}d ${formatNumber(hours)}h ${formatNumber(minutes)}m_\n`
                                 } else {
-                                    time = `_${hours < 10 ? '0' + hours.toString() : hours}h ${minutes < 10 ? '0' + minutes.toString() : minutes}m_\n`
+                                    time = `_${formatNumber(hours)}h ${formatNumber(minutes)}m_\n`
                                 }
                             }
                             embedReply.addField(task, '\u200b',true)

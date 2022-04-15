@@ -167,6 +167,9 @@ client.on("interactionCreate", async (interaction) => {
       case "remind":
         return command.execute(interaction, Reminders);
       case "admin":
+        if (interaction.user.id !== process.env.ME) {
+            return interaction.reply("Only admins can use this command!");
+        }
         switch (interaction.options.getSubcommand()) {
           case "add":
             const name = interaction.options.getString("name");

@@ -13,7 +13,7 @@ const addItemFromRoll = async (user, rollResult, rollReply) => {
     user.gold -= 1;
     if (rollResult.effect[0] === 'P') {
         const stats = getStatsFromItem(rollResult);
-        rollReply.addField(`${rollResult.name}`, `Used automatically! STR+${stats[0]}, DEX+${stats[1]},\nINT+${stats[2]}, WIZ+${stats[3]}`, true);
+        rollReply.addField(`${rollResult.name}`, `Used automatically!\nSTR+${stats[0]}, DEX+${stats[1]},\nINT+${stats[2]}, WIZ+${stats[3]}`, true);
     } else {
         rollReply.addField(`${rollResult.name}`, `Added to inventory!`, true);
     }
